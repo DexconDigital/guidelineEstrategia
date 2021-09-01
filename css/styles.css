@@ -1,0 +1,382 @@
+.bg-azul-claro {
+    background-color: #daeef3;
+}
+
+.bg-cyan-claro {
+    background-color: #c6d9f0;
+}
+
+.bg-amarillo-claro {
+    background-color: #FFFF99;
+}
+
+.bg-amarillo {
+    background-color: rgb(253, 211, 0);
+    color: black;
+}
+
+.bg-piel {
+    background-color: #fbd4b4;
+}
+
+/* VERDE COLOR*/
+.bg-verde {
+    background-color: #86F200;
+    color: black;
+}
+
+a.bg-verde:hover,
+a.bg-verde:focus,
+button.bg-verde:hover,
+button.bg-verde:focus {
+    background-color: #71c904 !important;
+}
+
+.btn-verde {
+    color: #1C1C1C;
+    background-color: #86F200;
+    border-color: #86F200;
+}
+
+.btn-verde:hover {
+    color: #1C1C1C;
+    background-color: #71c904;
+    border-color: #71c904;
+}
+
+.btn-verde:focus,
+.btn-verde.focus {
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(133, 241, 0, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(133, 241, 0, 0.5);
+}
+
+.border-verde {
+    border-color: #71c904 !important;
+}
+
+/* red COLOR*/
+.bg-red {
+    background-color: #C00000;
+    color: white;
+}
+
+a.bg-red:hover,
+a.bg-red:focus,
+button.bg-red:hover,
+button.bg-red:focus {
+    background-color: #C63430 !important;
+}
+
+.btn-red {
+    color: #fff;
+    background-color: #C63430;
+    border-color: #C63430;
+}
+
+.btn-red:hover {
+    color: #fff;
+    background-color: #C63430;
+    border-color: #C63430;
+}
+
+.btn-red:focus,
+.btn-red.focus {
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(198, 52, 48, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(198, 52, 48, 0.5);
+}
+
+/* NEGRO DEXCON COLOR*/
+.text-negro {
+    color: #1C1C1C;
+}
+
+.bg-negro {
+    background-color: #1C1C1C;
+}
+
+a.bg-negro:hover,
+a.bg-negro:focus,
+button.bg-negro:hover,
+button.bg-negro:focus {
+    color: aliceblue !important;
+    background-color: #1C1C1C !important;
+}
+
+.btn-negro {
+    color: #fff;
+    background-color: #1C1C1C;
+    border-color: #1C1C1C;
+}
+
+.btn-negro:hover {
+    color: #fff;
+    background-color: #1C1C1C;
+    border-color: #1C1C1C;
+}
+
+.btn-negro:focus,
+.btn-negro.focus {
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.5);
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.card-hover:hover {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.ml-12 {
+    margin-left: 12rem !important;
+}
+
+.ml-35 {
+    margin-left: 35% !important;
+}
+
+.w-12 {
+    width: 12rem;
+}
+
+.graficas {
+    width: 100%;
+    height: 600px !important;
+}
+
+.first-uppercase span::first-letter {
+    text-transform: uppercase !important;
+}
+
+.first-uppercase::first-letter {
+    text-transform: uppercase !important;
+}
+
+/* Modal FullScreen */
+.modal.modal-fullscreen .modal-dialog {
+    width: 100vw;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    max-width: none;
+}
+
+.modal.modal-fullscreen .modal-content {
+    height: auto;
+    border-radius: 0;
+    border: none;
+}
+
+.modal.modal-fullscreen .modal-body {
+    overflow-y: auto;
+}
+
+/* Colores en modal de graficas*/
+.nav-pills .nav-link.clientes.active {
+    color: black !important;
+    background-color: #3EFAC5;
+}
+
+.nav-pills .nav-link.estrategia.active {
+    color: black !important;
+    background-color: #FDD300;
+}
+
+.nav-pills .nav-link.tecnologia.active {
+    color: black !important;
+    background-color: #34F0FF;
+}
+
+.nav-pills .nav-link.operaciones.active {
+    color: black !important;
+    background-color: #86F200;
+}
+
+.nav-pills .nav-link.cultura.active {
+    color: white !important;
+    background-color: #852766;
+}
+
+.vh-80 {
+    height: 80vh !important;
+}
+
+
+
+
+.fs-14 {
+    font-size: 14px !important;
+}
+
+.hidden_principal {
+    width: 0%;
+    height: 0%;
+    z-index: -99;
+    position: absolute;
+}
+
+.Editor-container {
+    color: #1C1C1C !important;
+}
+
+/* preload*/
+
+.loader {
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    z-index: 2;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preload {
+    width: 15%;
+}
+
+body {
+    overflow: hidden;
+}
+
+.w-1 {
+    width: 1px !important;
+}
+
+/* Scrooll cuerpo tabla */
+.mw-45 {
+    min-width: 45rem !important;
+}
+
+.mh-350 {
+    max-height: 350px;
+    overflow: auto;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+}
+
+.sticky-bottom {
+    position: sticky;
+    bottom: 0;
+}
+
+.logo {
+    width: 87px;
+}
+
+.h-35 {
+    height: 35% !important;
+}
+
+body.modal-open {
+    overflow: hidden !important;
+}
+
+body.swal2-shown {
+    overflow: hidden !important;
+}
+
+.nav-pills > li > button.active {
+    box-shadow: 2px 4px 7px rgb(0 0 0 / 50%);
+    transition: all 0.3s ease 0s;
+}
+
+.mw-400 {
+    min-width: 400px;
+}
+
+.mw-600 {
+    min-width: 600px;
+}
+
+.mw-2400 {
+    min-width: 2400px;
+}
+
+.mw-2600 {
+    min-width: 2600px;
+}
+
+.mw-3200 {
+    min-width: 3200px;
+}
+
+.mw-5600 {
+    min-width: 5600px;
+}
+
+.mxw-23 {
+    max-width: 23%;
+}
+
+@media (max-width: 1199.98px) {
+    .copyright {
+        font-size: 1rem !important;
+    }
+}
+
+@media (max-width: 992px) {
+
+    .copyright {
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .titulo-principal-container {
+        justify-content: flex-start !important;
+    }
+
+    .titulo-principal {
+        padding-top: 1rem;
+        font-size: 2rem !important;
+        padding-left: 0;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .titulo-principal {
+        padding-top: 1rem;
+        font-size: 1.7rem !important;
+        padding-left: 0;
+    }
+
+    .copyright {
+        font-size: 9px !important;
+    }
+
+    .dexcon_copy {
+        display: block;
+    }
+
+    .nav-pills .nav-item,
+    .nav-pills .nav-item .color-empresa {
+        width: 100% !important;
+    }
+
+    .preload {
+        width: 25%;
+    }
+}
+
+@media (max-width: 375px) {
+    .copyright {
+        font-size: 8px !important;
+    }
+}
