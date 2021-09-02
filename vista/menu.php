@@ -169,7 +169,6 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <!-- /.container-fluid -->
             </div>
@@ -1965,7 +1964,16 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             <button class="btn color-empresa m-1" id="pills-promesa-tab" data-toggle="pill" href="#pills-promesa" type="button" role="tab" aria-controls="pills-promesa" aria-selected="true">Promesa de servicio</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="btn color-empresa m-1" id="pills-objetivos-tab" data-toggle="pill" href="#pills-objetivos" type="button" role="tab" aria-controls="pills-objetivos" aria-selected="true">Objetivos estrategicos y/o estrategias</button>
+                            <button class="btn color-empresa m-1" id="pills-objetivos-tab" data-toggle="pill" href="#pills-objetivos" type="button" role="tab" aria-controls="pills-objetivos" aria-selected="true">Objetivos estratégicos y/o estrategias</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button type="button" class="btn color-empresa m-1 dropdown-toggle bcg_reportes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Reportes
+                            </button>
+                            <div class="dropdown-menu p-0">
+                                <a class="dropdown-item futuro_reporte" data-reporte="pdf" href="#!">PDF</a>
+                                <a class="dropdown-item futuro_reporte" data-reporte="excel" href="#!">Excel</a>
+                            </div>
                         </li>
                     </ul>
                     <div class="alerta4"></div>

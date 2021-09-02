@@ -3,6 +3,8 @@
 var usuarioModelo = {
     listaUsuario: [],
     listaBCG: [],
+    listaFuturo: [],
+    listaObjetivos: [],
     pos: -1
 };
 
@@ -1520,6 +1522,7 @@ var gestionUsuario = {
     datosFuturo: function (datos) {
         //tabla futuro
         var futuro_general = datos.cmi_futuro;
+        usuarioModelo.listaFuturo = datos.cmi_futuro
         if (futuro_general != null && futuro_general != "") {
             var tabla = $('.futurotabla0');
             for (var pos = 0; pos <= 2; pos++) {
@@ -1554,7 +1557,34 @@ var gestionUsuario = {
             var tr = gestionUsuario.camposFuturo(valor);
             $('.futurotabla' + idx + ' tbody').append(tr);
         });
-        //cargar politicas
+        //reportes
+        $('.futuro_reporte').click(function (e) {
+            e.stopImmediatePropagation();
+            var idx = $(this).attr("data-reporte");
+            var data = {
+                'respuesta': usuarioModelo.listaFuturo,
+                'objetivos': usuarioModelo.listaObjetivos,
+                'razon_social': usuarioModelo.listaUsuario.razon_social
+            }
+            if (idx == "pdf") {
+                app.ajax('../controlador/GestionUsuarioControlador.php?opcion=scorecard_pdf', data, gestionUsuario.respuestaGenerarReporte);
+                Swal.fire({
+                    title: "Generando reporte...",
+                    text: "Espera un momento",
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                });
+            }
+            if (idx == "excel") {
+                app.ajax('../controlador/GestionUsuarioControlador.php?opcion=scorecard_excel', data, gestionUsuario.respuestaGenerarReporte);
+                Swal.fire({
+                    title: "Generando reporte...",
+                    text: "Espera un momento",
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                });
+            }
+        });
     },
     camposFuturo: function (campo) {
         var tr = '<tr>' +
@@ -1597,6 +1627,7 @@ var gestionUsuario = {
     },
     datosObjetivos: function (datos) {
         var objetivos_general = datos.cmi_objetivos;
+        usuarioModelo.listaObjetivos = datos.cmi_objetivos
         var tabla_objetivos = $(".listaobjetivos tbody");
         if (objetivos_general != null && objetivos_general != "") {
             tabla_objetivos.empty();
@@ -1619,11 +1650,11 @@ var gestionUsuario = {
         var tr = '<tr>' +
             '<td class="w-1 data-fila">O' + pos + 'PH</td>' +
             '<td class="p-0"><textarea class="form-control mb-0 shadow-none rounded-0 data general">' + campo[0] + '</textarea></td>' +
-            '<td class="w-1 data-fila">O' + pos + 'PH</td>' +
+            '<td class="w-1 data-fila">O' + pos + 'PP</td>' +
             '<td class="p-0"><textarea class="form-control mb-0 shadow-none rounded-0 data general">' + campo[1] + '</textarea></td>' +
-            '<td class="w-1 data-fila">O' + pos + 'PH</td>' +
+            '<td class="w-1 data-fila">O' + pos + 'PC</td>' +
             '<td class="p-0"><textarea class="form-control mb-0 shadow-none rounded-0 data general">' + campo[2] + '</textarea></td>' +
-            '<td class="w-1 data-fila">O' + pos + 'PH</td>' +
+            '<td class="w-1 data-fila">O' + pos + 'PF</td>' +
             '<td class="p-0"><textarea class="form-control mb-0 shadow-none rounded-0 data general">' + campo[3] + '</textarea></td>';
         tr += "</tr>";
         return tr;

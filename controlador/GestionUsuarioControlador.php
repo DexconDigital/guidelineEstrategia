@@ -823,6 +823,304 @@ class GestionUsuarioControlador extends GenericoControlador {
         }
     }
 
+    public function scorecard_pdf() {
+        try {
+            Validacion::validar( ['respuesta' => 'obligatorio', 'objetivos' => 'obligatorio'], $_POST );
+            $resultados = $_POST ['respuesta'];
+            $objetivos = $_POST ['objetivos'];
+            $razon_social = $_POST['razon_social'];
+            $header = '<head> 
+                      <style>
+                            h1 { font-family: chronicle;font-weight: normal; } 
+                            h4 { font-family: chronicle; font-size: 10pt; text-align:center; margin-top: 0; margin-bottom: 0; }
+                            h6 { font-family: chronicle; font-size: 6pt; font-weight: 100; text-align:center; margin-top: 0; margin-bottom: 0;}
+                            table, td{border-collapse: collapse; color: black !important; text-align: center;font-size:12px; }
+                            body {font-family: opensans;}
+                      </style> 
+                   </head>';
+            // Cabecera del documento
+            $cabecera = "<div style='margin-bottom:15px;'> 
+                            <div style='float: left; width: 10%; text-align:left;' > 
+                                <img src='../img/logo.png'>
+                            </div> 
+                            <div style='float:left; vertical-align: top; padding-left: 18px;'>
+                                <h1 style='font-size: 20pt;margin-left:70px;'>Cuadro de Mando Integral - Balanced Scorecard</h1> 
+                            </div>
+                        </div>";
+            //Cuerpo del documento
+            $mision = str_replace( "\n", "<br>", $resultados[0][0] );
+            $vision = str_replace( "\n", "<br>", $resultados[0][1] );
+            $valores = str_replace( "\n", "<br>", $resultados[0][2] );
+            $politicas = $resultados[1];
+            $promesas = $resultados[2];
+            $tablas = "<b>Instrucción</b>: <span>Con base en todos los análisis anteriores defina la Misión, Visión, Valores y políticas que asumirá la compañía durante el horizonte estratégico.</span>";
+            $tablas .= "<table style='width:100%;'>
+                            <tr>
+                                <td colspan='3' style='border: 0.5px solid #858796;'><h3>Plan de futuro</h3></td>
+                            <tr>
+                            <tr>
+                                <td style='width:33%;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Misión</td>
+                                <td style='width:33%;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Visión</td>
+                                <td style='width:33%;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Valores</td>
+                            </tr>
+                            <tr>
+                                <td style='height:100px;border:0.5px solid #858796;vertical-align:top'>{$mision}</td>
+                                <td style='height:100px;border:0.5px solid #858796;vertical-align:top'>{$vision}</td>
+                                <td style='height:100px;border:0.5px solid #858796;vertical-align:top'>{$valores}</td>
+                            </tr>
+                            <tr>
+                                <td colspan='3' style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'><h3>Politicas de gestión</h3></td>
+                            </tr>";
+            //Listar politicas
+            for ( $i = 0; $i < count( $politicas );
+            $i++ ) {
+                $tablas .= "<tr>
+                                <td colspan='3' style='border:0.5px solid #858796;'>{$politicas[$i]}</td>
+                            </tr>";
+            }
+            $tablas .= "<tr>
+                            <td colspan='3' style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'><h3>Promesa de servicio</h3></td>
+                        </tr>";
+            //Listar Promesa de servicio
+            for ( $i = 0; $i < count( $promesas );
+            $i++ ) {
+                $tablas .= "<tr>
+                                <td colspan='3' style='border:0.5px solid #858796;'>{$promesas[$i]}</td>
+                            </tr>";
+            }
+            $tablas .= "</table>";
+            //Objetivos
+            $tablas .= "<table style='width:100%;'>
+                            <tr>
+                                <td colspan='8'><b>Instrucción</b>: <span>Transfiera las estrategias descritas y/o definidas en el cuadro de DEFINICION DE ESTRATEGIAS DE LA ORGANIZACIÓN a la celda que corresponda según la perspectiva del Balanced Scorecard.</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan='8' style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'><h3>Objetivos estratégicos y/o estrategias</h3></td>
+                            </tr>
+                            <tr>
+                                <td colspan='2' style='width:25%;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Perspectiva de talento humano</td>
+                                <td colspan='2' style='width:25%;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Perspectiva de procesos internos</td>
+                                <td colspan='2' style='width:25%;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Perspectiva de cliente</td>
+                                <td colspan='2' style='width:25%;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Perspectiva financiera</td>
+                            </tr> ";
+            //Listar objetivos
+            for ( $i = 0; $i < count( $objetivos );
+            $i++ ) {
+                $pos = ( $i + 1 );
+                $campo = $objetivos[$i];
+                $tablas .= "<tr>
+                                <td style='width:5%;border:0.5px solid #858796;'>O{$pos}PH</td>
+                                <td style='border:0.5px solid #858796;'>{$campo[0]}</td>
+                                <td style='width:5%;border:0.5px solid #858796;'>O{$pos}PP</td>
+                                <td style='border:0.5px solid #858796;'>{$campo[1]}</td>
+                                <td style='width:5%;border:0.5px solid #858796;'>O{$pos}PC</td>
+                                <td style='border:0.5px solid #858796;'>{$campo[2]}</td>
+                                <td style='width:5%;border:0.5px solid #858796;'>O{$pos}PF</td>
+                                <td style='border:0.5px solid #858796;'>{$campo[3]}</td>
+                            </tr>";
+            }
+            $tablas .= "</table>";
+            $ehtml =  "<html> 
+                        <body> 
+                            {$cabecera}
+                            {$tablas}
+                            <div style='clear: both; margin: 0pt; padding: 0pt; '></div>
+                        </body>                    
+                  </html>";
+            $mpdf = new \Mpdf\Mpdf( ['mode' => 'utf-8', 'format' => 'A4-L'] );
+            $mpdf->WriteHTML( $ehtml );
+            $pdfString = $mpdf->Output( '', 'S' );
+            $pdfBase64 = base64_encode( $pdfString );
+            $PDF = 'data:application/pdf;base64,' . $pdfBase64;
+            $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $PDF, 'nombre' => $razon_social, 'tipo' => 'Scorecard', 'ext' => '.pdf'] );
+        } catch ( ValidacionExcepcion $error ) {
+            $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
+        }
+    }
+
+    public function scorecard_excel() {
+
+        try {
+
+            Validacion::validar( ['respuesta' => 'obligatorio', 'objetivos' => 'obligatorio'], $_POST );
+            $resultados = $_POST ['respuesta'];
+            $objetivos = $_POST ['objetivos'];
+            $razon_social = $_POST['razon_social'];
+            $mision = ( $resultados[0][0] );
+            $vision = ( $resultados[0][1] );
+            $valores = ( $resultados[0][2] );
+            $politicas = $resultados[1];
+            $promesas = $resultados[2];
+            $styleArray = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getActiveSheet()->getStyle( 'A1:R50' )->getAlignment()->setWrapText( true );
+            $spreadsheet->getActiveSheet()->getStyle( "A1" )->getFont()->setSize( 19 )->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( 'A1' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->mergeCells( "A1:R3" );
+            //Logo dexcon
+            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawing->setPath( "../img/logo.png" );
+            $drawing->setName( 'Logo' );
+            $drawing->setCoordinates( 'B1' );
+            $drawing->setWidthAndHeight( 100, 100 );
+            $drawing->setWorksheet( $spreadsheet->setActiveSheetIndex( 0 ) );
+            $sheet = $spreadsheet->getActiveSheet();
+            //Titulo
+            $sheet->setCellValue( 'A1', 'Cuadro de Mando Integral - Balanced Scorecard' );
+            $spreadsheet->getActiveSheet()->getStyle( 'A1:R50' )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER );
+            //Cuerpo parte 1
+            $sheet->setCellValue( 'A4', 'Instrucción: Con base en todos los análisis anteriores defina la Misión, Visión, Valores y políticas que asumirá la compañía durante el horizonte estratégico.' );
+            $spreadsheet->getActiveSheet()->getStyle( 'A4' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "A4" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'E6E6E6' );
+            $spreadsheet->getActiveSheet()->mergeCells( "A4:R5" );
+            //Cuerpo parte 2
+            $sheet->setCellValue( 'A7', 'Plan de futuro' );
+            $spreadsheet->getActiveSheet()->getStyle( "A7" )->getFont()->setSize( 15 )->setBold( true );
+            $spreadsheet->getActiveSheet()->mergeCells( "A7:R7" );
+            //Cuerpo parte 3
+            $spreadsheet->getActiveSheet()->getStyle( "A8:R8" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "A8:R8" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->getStyle( 'A8:R8' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( 'A9:M9' )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP );
+            $spreadsheet->getActiveSheet()->getRowDimension( 9 )->setRowHeight( 130 );
+
+            //Cuerpo parte 3.1 misión
+            $sheet->setCellValue( 'A8', 'Misión' );
+            $spreadsheet->getActiveSheet()->mergeCells( "A8:F8" );
+            $sheet->setCellValue( 'A9', $mision );
+            $spreadsheet->getActiveSheet()->mergeCells( "A9:F9" );
+            //Cuerpo parte 3.2 visión
+            $sheet->setCellValue( 'G8', 'Visión' );
+            $spreadsheet->getActiveSheet()->mergeCells( "G8:L8" );
+            $sheet->setCellValue( 'G9', $vision );
+            $spreadsheet->getActiveSheet()->mergeCells( "G9:L9" );
+            //Cuerpo parte 3.2 valores
+            $sheet->setCellValue( 'M8', 'Valores' );
+            $spreadsheet->getActiveSheet()->mergeCells( "M8:R8" );
+            $sheet->setCellValue( 'M9', $valores );
+            $spreadsheet->getActiveSheet()->mergeCells( "M9:R9" );
+            //Cuerpo parte 4
+            $sheet->setCellValue( 'A11', 'Politicas de gestión' );
+            $spreadsheet->getActiveSheet()->getStyle( "A11" )->getFont()->setSize( 13 )->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( 'A11' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "A11" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "A11" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->mergeCells( "A11:R11" );
+            //Cuerpo parte 4.1 listar politicas
+            $pos = 12;
+            for ( $i = 0; $i < count( $politicas );
+            $i++ ) {
+
+                $sheet->setCellValue( "A{$pos}", $politicas[$i] );
+                $spreadsheet->getActiveSheet()->mergeCells( "A{$pos}:R{$pos}" );
+                $pos++;
+            }
+            //Cuerpo parte 5
+            $sheet->setCellValue( "A{$pos}", 'Promesa de servicio' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$pos}" )->getFont()->setSize( 13 )->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$pos}" )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$pos}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$pos}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->mergeCells( "A{$pos}:R{$pos}" );
+            //Cuerpo parte 5.1 Promesa de servicio
+            $pos_prom = ( $pos + 1 );
+            for ( $i = 0; $i < count( $promesas );
+            $i++ ) {
+
+                $sheet->setCellValue( "A{$pos_prom}", $promesas[$i] );
+                $spreadsheet->getActiveSheet()->mergeCells( "A{$pos_prom}:R{$pos_prom}" );
+                $pos_prom++;
+            }
+            //Cuerpo parte 6
+            $alto = ( $pos_prom + 1 );
+            $sheet->setCellValue( "A{$pos_prom}", 'Instrucción: Transfiera las estrategias descritas y/o definidas en el cuadro de DEFINICION DE ESTRATEGIAS DE LA ORGANIZACIÓN a la celda que corresponda según la perspectiva del Balanced Scorecard.' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$pos_prom}" )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$pos_prom}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'E6E6E6' );
+            $spreadsheet->getActiveSheet()->mergeCells( "A{$pos_prom}:R{$alto}" );
+            //Cuerpo parte 6.1
+            $alto_6_1 = ( $alto + 1 );
+            $sheet->setCellValue( "A{$alto_6_1}", 'Objetivos estratégicos y/o estrategias' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$alto_6_1}" )->getFont()->setSize( 13 )->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$alto_6_1}" )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$alto_6_1}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$alto_6_1}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->mergeCells( "A{$alto_6_1}:R{$alto_6_1}" );
+            //Cuerpo parte 6.2 Perspectiva de talento humano
+            $alto_6_2 = ( $alto_6_1 + 1 );
+            //Estilos 6.2
+            $spreadsheet->getActiveSheet()->getStyle( "A{$alto_6_2}:R{$alto_6_2}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'E6E6E6' );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$alto_6_2}:R{$alto_6_2}" )->getAlignment()->setHorizontal( 'center' );
+            //Cabecera 6.2
+            $sheet->setCellValue( "A{$alto_6_2}", 'Perspectiva de talento humano' );
+            $spreadsheet->getActiveSheet()->mergeCells( "A{$alto_6_2}:E{$alto_6_2}" );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$alto_6_2}:E{$alto_6_2}" )->applyFromArray( $styleArray );
+            //Cuerpo parte Perspectiva de procesos internos
+            $sheet->setCellValue( "F{$alto_6_2}", 'Perspectiva de procesos internos' );
+            $spreadsheet->getActiveSheet()->mergeCells( "F{$alto_6_2}:J{$alto_6_2}" );
+            $spreadsheet->getActiveSheet()->getStyle( "F{$alto_6_2}:J{$alto_6_2}" )->applyFromArray( $styleArray );
+            //Cuerpo parte Perspectiva de cliente
+            $sheet->setCellValue( "K{$alto_6_2}", 'Perspectiva de cliente' );
+            $spreadsheet->getActiveSheet()->mergeCells( "K{$alto_6_2}:N{$alto_6_2}" );
+            $spreadsheet->getActiveSheet()->getStyle( "K{$alto_6_2}:N{$alto_6_2}" )->applyFromArray( $styleArray );
+            //Cuerpo parte Perspectiva financiera
+            $sheet->setCellValue( "O{$alto_6_2}", 'Perspectiva financiera' );
+            $spreadsheet->getActiveSheet()->mergeCells( "O{$alto_6_2}:R{$alto_6_2}" );
+            $spreadsheet->getActiveSheet()->getStyle( "O{$alto_6_2}:R{$alto_6_2}" )->applyFromArray( $styleArray );
+            //Listar objetivos
+            $pos_6_3 = ( $alto_6_2 + 1 );
+
+            for ( $i = 0; $i < count( $objetivos );
+            $i++ ) {
+                $pos_i = ( $i + 1 );
+                $campo = $objetivos[$i];
+                //Indices
+                $sheet->setCellValue( "A{$pos_6_3}", "O{$pos_i}PH" );
+                $sheet->setCellValue( "F{$pos_6_3}", "O{$pos_i}PP" );
+                $sheet->setCellValue( "K{$pos_6_3}", "O{$pos_i}PC" );
+                $sheet->setCellValue( "O{$pos_6_3}", "O{$pos_i}PF" );
+                //Datos
+                $sheet->setCellValue( "B{$pos_6_3}", $campo[0] );
+                $spreadsheet->getActiveSheet()->mergeCells( "B{$pos_6_3}:E{$pos_6_3}" );
+                $sheet->setCellValue( "G{$pos_6_3}", $campo[1] );
+                $spreadsheet->getActiveSheet()->mergeCells( "G{$pos_6_3}:J{$pos_6_3}" );
+                $sheet->setCellValue( "L{$pos_6_3}", $campo[2] );
+                $spreadsheet->getActiveSheet()->mergeCells( "L{$pos_6_3}:N{$pos_6_3}" );
+                $sheet->setCellValue( "P{$pos_6_3}", $campo[3] );
+                $spreadsheet->getActiveSheet()->mergeCells( "P{$pos_6_3}:R{$pos_6_3}" );
+                //Estilos
+                $spreadsheet->getActiveSheet()->getStyle( "A{$pos_6_3}" )->applyFromArray( $styleArray );
+                $spreadsheet->getActiveSheet()->getStyle( "F{$pos_6_3}" )->applyFromArray( $styleArray );
+                $spreadsheet->getActiveSheet()->getStyle( "K{$pos_6_3}" )->applyFromArray( $styleArray );
+                $spreadsheet->getActiveSheet()->getStyle( "O{$pos_6_3}" )->applyFromArray( $styleArray );
+                $spreadsheet->getActiveSheet()->getStyle( "B{$pos_6_3}:E{$pos_6_3}" )->applyFromArray( $styleArray );
+                $spreadsheet->getActiveSheet()->getStyle( "G{$pos_6_3}:J{$pos_6_3}" )->applyFromArray( $styleArray );
+                $spreadsheet->getActiveSheet()->getStyle( "L{$pos_6_3}:N{$pos_6_3}" )->applyFromArray( $styleArray );
+                $spreadsheet->getActiveSheet()->getStyle( "P{$pos_6_3}:R{$pos_6_3}" )->applyFromArray( $styleArray );
+                $spreadsheet->getActiveSheet()->getStyle( "B{$pos_6_3}" )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP );
+                $spreadsheet->getActiveSheet()->getStyle( "G{$pos_6_3}" )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP );
+                $spreadsheet->getActiveSheet()->getStyle( "L{$pos_6_3}" )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP );
+                $spreadsheet->getActiveSheet()->getStyle( "P{$pos_6_3}" )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP );
+                $spreadsheet->getActiveSheet()->getRowDimension( $pos_6_3 )->setRowHeight( 30 );
+                $pos_6_3++;
+            }
+            $writer = new Xlsx( $spreadsheet );
+            ob_start();
+            $writer->save( 'php://output' );
+            $contenido = ob_get_clean();
+            $excelBase64 = base64_encode( $contenido );
+            $excel = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' . $excelBase64;
+            $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $excel, 'nombre' => $razon_social, 'tipo' => 'Scorecard', 'ext' => '.xlsx'] );
+        } catch ( ValidacionExcepcion $error ) {
+            $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
+        }
+    }
+
 }
 
 $controlador = new GestionUsuarioControlador();
