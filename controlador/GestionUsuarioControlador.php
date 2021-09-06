@@ -935,8 +935,6 @@ class GestionUsuarioControlador extends GenericoControlador {
             $pdfString = $mpdf->Output( '', 'S' );
             $pdfBase64 = base64_encode( $pdfString );
             $PDF = 'data:application/pdf;base64,' . $pdfBase64;
-            echo $PDF;
-            exit();
             $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $PDF, 'nombre' => $razon_social, 'tipo' => 'Scorecard', 'ext' => '.pdf'] );
         } catch ( ValidacionExcepcion $error ) {
             $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
