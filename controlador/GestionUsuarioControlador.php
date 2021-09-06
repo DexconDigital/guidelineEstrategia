@@ -574,9 +574,10 @@ class GestionUsuarioControlador extends GenericoControlador {
 
     public function agregar_cmi() {
         try {
-            Validacion::validar( ['general' => 'obligatorio'], $_POST );
+            Validacion::validar( ['anio' => 'obligatorio', 'general' => 'obligatorio'], $_POST );
             $id_empresa = $_POST['id_empresa'];
             $general = $_POST['general'];
+            $anio = $_POST['anio'];
             $consultar_estrategias = $this->usuarioDAO->consultar_estrategias( $id_empresa );
             if ( !$consultar_estrategias ) {
                 $this->usuarioDAO->agregar_estrategias( $id_empresa );
@@ -588,6 +589,8 @@ class GestionUsuarioControlador extends GenericoControlador {
             if ( $datos->cmi != "" ) {
                 $generalArray = json_decode( $datos->cmi, true );
             }
+            //Borra el anterior array para insertar el nuevo
+            unset( $generalArray[$anio] );
             for ( $i = 0; $i < count( $gnral );
             $i++ ) {
                 $general_dato = $gnral[$i];
@@ -932,6 +935,8 @@ class GestionUsuarioControlador extends GenericoControlador {
             $pdfString = $mpdf->Output( '', 'S' );
             $pdfBase64 = base64_encode( $pdfString );
             $PDF = 'data:application/pdf;base64,' . $pdfBase64;
+            echo $PDF;
+            exit();
             $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $PDF, 'nombre' => $razon_social, 'tipo' => 'Scorecard', 'ext' => '.pdf'] );
         } catch ( ValidacionExcepcion $error ) {
             $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
@@ -939,9 +944,7 @@ class GestionUsuarioControlador extends GenericoControlador {
     }
 
     public function scorecard_excel() {
-
         try {
-
             Validacion::validar( ['respuesta' => 'obligatorio', 'objetivos' => 'obligatorio'], $_POST );
             $resultados = $_POST ['respuesta'];
             $objetivos = $_POST ['objetivos'];
@@ -1074,11 +1077,11 @@ class GestionUsuarioControlador extends GenericoControlador {
             $spreadsheet->getActiveSheet()->getStyle( "O{$alto_6_2}:R{$alto_6_2}" )->applyFromArray( $styleArray );
             //Listar objetivos
             $pos_6_3 = ( $alto_6_2 + 1 );
-
             for ( $i = 0; $i < count( $objetivos );
             $i++ ) {
                 $pos_i = ( $i + 1 );
                 $campo = $objetivos[$i];
+
                 //Indices
                 $sheet->setCellValue( "A{$pos_6_3}", "O{$pos_i}PH" );
                 $sheet->setCellValue( "F{$pos_6_3}", "O{$pos_i}PP" );
@@ -1121,6 +1124,430 @@ class GestionUsuarioControlador extends GenericoControlador {
         }
     }
 
+    public function indicadores_pdf() {
+        try {
+            Validacion::validar( ['resultado' => 'obligatorio', 'anio' => 'obligatorio', 'datos_anios' => 'obligatorio'], $_POST );
+            $resultado = $_POST ['resultado'];
+            $datos_anios = $_POST ['datos_anios'];
+            $anio = $_POST ['anio'];
+            $razon_social = $_POST['razon_social'];
+            $promedio = $_POST['promedio'];
+            $meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Promedio"];
+            $header = '<head> 
+                      <style>
+                            h1 { font-family: chronicle;font-weight: normal; } 
+                            h4 { font-family: chronicle; font-size: 10pt; text-align:center; margin-top: 0; margin-bottom: 0; }
+                            h6 { font-family: chronicle; font-size: 6pt; font-weight: 100; text-align:center; margin-top: 0; margin-bottom: 0;}
+                            table, td{border-collapse: collapse; color: black !important; text-align: center;font-size:12px; }
+                            body {font-family: opensans;}
+                      </style> 
+                   </head>';
+            // Cabecera del documento
+            $cabecera = "<div style='margin-bottom:10px;'> 
+                            <div style='float: left; width: 10%; text-align:left;' > 
+                                <img src='../img/logo.png'>
+                            </div> 
+                            <div style='float:left; vertical-align: top; padding-left: 18px;'>
+                                <h1 style='font-size: 20pt;margin-left:70px;'>Tablero de indicadores {$anio}</h1> 
+                            </div>
+                        </div>";
+            //Cabecera de la tabla
+            $tablas = "<tbody>
+                            <tr>
+                                <td colspan='6' style='width:1050px;'></td>
+                                <td colspan='3' style='width:550px;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Meta</td>
+                                <td colspan='13' style='width:1050px;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Año {$anio}</td>
+                            </tr>
+                            <tr>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Direccionamiento estratégico</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Directriz de política</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Objetivo de gestión</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Proceso</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Indicador</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Fórmula</td>
+                                <td style='background-color: #86F200;border:0.5px solid #858796;text-align:center'>Sobresaliente</td>
+                                <td style='background-color: #fdd300;border:0.5px solid #858796;text-align:center'>Normal (Meta)</td>
+                                <td style='background-color: #C00000; color: white;border:0.5px solid #858796;text-align:center'>Deficiente</td>";
+            for ( $i = 0; $i < 13; $i++ ) {
+                $tablas .= "<td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>{$meses[$i]}</td>";
+            }
+            $tablas .= "</tr>";
+            //Datos
+            $data = $datos_anios[1];
+            $tablas .= "<tr>";
+            for ( $i = 1; $i <= count( $data );
+            $i++ ) {
+                $campos = $data[$i];
+                //Campo 1
+                if ( $i == 1 ) {
+                    $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
+                    for ( $a = 0; $a < count( $campos );
+                    $a++ ) {
+                        $dato = ( $campos[$a] != "" ) ? $campos[$a] : "-";
+                        $tablas .= "<tr>
+                                        <td style='width:50%;border:0.5px solid #858796;'>{$dato[0]}</td>
+                                        <td style='width:50%;border:0.5px solid #858796;'>{$dato[1]}</td>
+                                    </tr>";
+                    }
+                    $tablas .= "</table></td>";
+                }
+                //Campo 2 al 6
+                if ( $i >= 2 && $i <= 6 ) {
+                    $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
+                    for ( $a = 0; $a < count( $campos );
+                    $a++ ) {
+                        $dato = ( $campos[$a] != "" ) ? $campos[$a] : "-";
+                        $tablas .= "<tr>
+                                        <td style='border:0.5px solid #858796;'>{$dato}</td>
+                                    </tr>";
+                    }
+                    $tablas .= "</table></td>";
+                }
+                //Campo 7
+                if ( $i == 7 ) {
+                    for ( $c = 0; $c < 3; $c++ ) {
+                        $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
+                        for ( $a = 0; $a < count( $campos );
+                        $a++ ) {
+                            $dato = $campos[$a];
+                            $dat = ( $dato[$c] != "" ) ? $dato[$c] : "-";
+                            $color = "";
+                            $texto_color = "";
+                            if ( $c == 2 ) {
+                                $color = "#C00000";
+                                $texto_color = "white";
+                            }
+                            if ( $c == 1 ) {
+                                $color = "#fdd300";
+                                $texto_color = "black";
+                            }
+                            if ( $c == 0 ) {
+                                $color = "#86F200";
+                                $texto_color = "black";
+                            }
+                            $tablas .= "<tr>
+                                            <td style='background-color:{$color};color:{$texto_color};border:0.5px solid #858796;'>{$dat}</td>
+                                        </tr>";
+                        }
+                        $tablas .= "</table></td>";
+                    }
+                }
+                //Campo 8 al 12
+                if ( $i >= 8 ) {
+                    for ( $c = 0; $c < 12; $c++ ) {
+                        $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
+                        for ( $a = 0; $a < count( $campos );
+                        $a++ ) {
+                            $dato = $campos[$a];
+                            $dat = ( $dato[$c] != "" ) ? "{$dato[$c]}%" : "-";
+                            $tablas .= "<tr>
+                                            <td style='border:0.5px solid #858796;text-align:center'>{$dat}</td>
+                                        </tr>";
+                        }
+                        $tablas .= "</table></td>";
+                    }
+                }
+            }
+            //Promedios
+            $prom = explode( "|", $promedio );
+            $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
+            for ( $a = 0; $a < count( $prom );
+            $a++ ) {
+                $tablas .= "<tr>
+                                <td style='border:0.5px solid #858796;text-align:center'>{$prom[$a]}</td>
+                            </tr>";
+            }
+            $tablas .= "</table></td>";
+            $tablas .= "</tr>";
+            //Pie con resultados
+            $tablas .= "<tr>
+                            <td colspan='9'></td>";
+            $res = explode( "|", $resultado );
+            for ( $i = 0; $i < 13; $i++ ) {
+                $color = "#C00000";
+                $texto_color = "white";
+                $dato = floatval( $res[$i] );
+                if ( $dato >= 33 ) {
+                    $color = "#fdd300";
+                    $texto_color = "black";
+                }
+                if ( $dato >= 67 ) {
+                    $color = "#86F200";
+                    $texto_color = "black";
+                }
+                $tablas .= "<td style='background-color:{$color};color:{$texto_color};border:0.5px solid #858796;text-align:center'>{$dato}%</td>";
+            }
+            //Total final
+            $total = floatval( $res[13] );
+            $color_total = "#C00000";
+
+            $texto_total = "white";
+            if ( $total >= 33 ) {
+                $color_total = "#fdd300";
+                $texto_total = "black";
+            }
+            if ( $total >= 67 ) {
+                $color_total = "#86F200";
+                $texto_total = "black";
+            }
+            $tablas .= "</tr>
+                        <tr>
+                            <td colspan='19'></td>
+                            <td colspan='3' style='background-color:{$color_total};color:{$texto_total};border:0.5px solid #858796;text-align:center'>{$total}%</td>
+                        </tr>
+                    </tbody>>";
+
+            $ehtml =  "<html> 
+                        <body> 
+                            {$cabecera}
+                            <table style='width:100%;'>
+                                {$tablas}
+                            </table>
+                            <div style='clear: both; margin: 0pt; padding: 0pt; '></div>
+                        </body>                    
+                  </html>";
+            //El problema es el colspan
+            $mpdf = new \Mpdf\Mpdf( ['mode' => 'utf-8', 'format' => 'A4-L'] );
+            $mpdf->WriteHTML( $ehtml );
+            $pdfString = $mpdf->Output( '', 'S' );
+            $pdfBase64 = base64_encode( $pdfString );
+            $PDF = 'data:application/pdf;base64,' . $pdfBase64;
+            $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $PDF, 'nombre' => $razon_social, 'tipo' => 'TableroIndicadores', 'ext' => '.pdf', 'anio' => $anio] );
+        } catch ( ValidacionExcepcion $error ) {
+            $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
+        }
+    }
+
+    public function indicadores_excel() {
+        try {
+            Validacion::validar( ['resultado' => 'obligatorio', 'datos_anios' => 'obligatorio', 'anio' => 'obligatorio'], $_POST );
+            $resultado = $_POST ['resultado'];
+            $datos_anios = $_POST ['datos_anios'];
+            $anio = $_POST ['anio'];
+            $razon_social = $_POST['razon_social'];
+            $promedio = $_POST['promedio'];
+            $meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "Promedio"];
+            $styleArray = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getActiveSheet()->getStyle( 'A1:R50' )->getAlignment()->setWrapText( true );
+            $spreadsheet->getActiveSheet()->getStyle( "A1" )->getFont()->setSize( 19 )->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( 'A1' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->mergeCells( "A1:R3" );
+            $spreadsheet->getActiveSheet()->getStyle( 'A1:H50' )->getAlignment()->setWrapText( true );
+            //Estilo de la parte 1
+            $spreadsheet->getActiveSheet()->getStyle( "H5:W5" )->getFont()->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( 'H5:W5' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "H5:W5" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "H5:W5" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            //Estilo de la parte 2
+            $spreadsheet->getActiveSheet()->getStyle( "A6:W6" )->getFont()->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( 'A6:W6' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "A6:W6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "A6:W6" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            //Celdas espacios
+            $spreadsheet->getActiveSheet()->getColumnDimension( 'A' )->setWidth( 50, 'pt' );
+            $spreadsheet->getActiveSheet()->getColumnDimension( 'b' )->setWidth( 50, 'pt' );
+            for ( $i = "C"; $i <= "J"; $i++ ) {
+                $spreadsheet->getActiveSheet()->getColumnDimension( "{$i}" )->setAutoSize( true );
+            }
+            //Celdas meses
+            for ( $i = "K"; $i <= "W"; $i++ ) {
+                $spreadsheet->getActiveSheet()->getColumnDimension( "{$i}" )->setWidth( 20, 'pt' );
+            }
+            //Logo dexcon
+            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawing->setPath( "../img/logo.png" );
+            $drawing->setName( 'Logo' );
+            $drawing->setCoordinates( 'B1' );
+            $drawing->setWidthAndHeight( 100, 100 );
+            $drawing->setWorksheet( $spreadsheet->setActiveSheetIndex( 0 ) );
+            $sheet = $spreadsheet->getActiveSheet();
+            //Titulo
+            $sheet->setCellValue( 'A1', "Tablero de indicadores {$anio}" );
+            $spreadsheet->getActiveSheet()->getStyle( 'A1:W50' )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER );
+            //Cabecera parte 1
+            $sheet->setCellValue( 'H5', 'Meta' );
+            $spreadsheet->getActiveSheet()->mergeCells( "H5:J5" );
+            //Cabecera parte 1.1
+            $sheet->setCellValue( 'K5', "Año {$anio}" );
+            $spreadsheet->getActiveSheet()->mergeCells( "K5:W5" );
+            //Cabecera parte 2
+            $sheet->setCellValue( 'A6', 'Direccionamiento estratégico' );
+            $spreadsheet->getActiveSheet()->mergeCells( "A6:B6" );
+            //Cabecera parte 2.1
+            $sheet->setCellValue( 'C6', 'Directriz de política' );
+            //Cabecera parte 2.2
+            $sheet->setCellValue( 'D6', 'Objetivo de gestión' );
+            //Cabecera parte 2.3
+            $sheet->setCellValue( 'E6', 'Proceso' );
+            //Cabecera parte 2.4
+            $sheet->setCellValue( 'F6', 'Indicador' );
+            //Cabecera parte 2.5
+            $sheet->setCellValue( 'G6', 'Fórmula' );
+            //Cabecera parte 2.6
+            $sheet->setCellValue( 'H6', 'Sobresaliente' );
+            $spreadsheet->getActiveSheet()->getStyle( "H6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '86F200' );
+            $spreadsheet->getActiveSheet()->getStyle( "H6" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+            $sheet->setCellValue( 'I6', 'Normal (Meta)' );
+            $spreadsheet->getActiveSheet()->getStyle( "I6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'fdd300' );
+            $spreadsheet->getActiveSheet()->getStyle( "I6" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+            $sheet->setCellValue( 'J6', 'Deficiente' );
+            $spreadsheet->getActiveSheet()->getStyle( "J6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'C00000' );
+            //Cabecera parte 2.7 meses
+            $mes = "K";
+            for ( $i = 0; $i < 13; $i++ ) {
+                $sheet->setCellValue( "{$mes}6", "{$meses[$i]}" );
+                $mes++;
+            }
+            //Cuerpo parte 1
+            $data = $datos_anios[1];
+            $campo = 7;
+            $letraC = "C";
+            $letraH = "H";
+            $letraK = "K";
+            for ( $i = 1; $i <= count( $data );
+            $i++ ) {
+                $campos = $data[$i];
+                //Campo A y B
+                if ( $i == 1 ) {
+                    $cmp = 7;
+                    for ( $a = 0; $a < count( $campos );
+                    $a++ ) {
+                        $dato = $campos[$a];
+                        $sheet->setCellValue( "A{$cmp}", "{$dato[0]}" );
+                        $sheet->setCellValue( "B{$cmp}", "{$dato[1]}" );
+                        $spreadsheet->getActiveSheet()->getStyle( "A{$cmp}" )->applyFromArray( $styleArray );
+                        $spreadsheet->getActiveSheet()->getStyle( "B{$cmp}" )->applyFromArray( $styleArray );
+                        $cmp++;
+
+                    }
+                }
+                //Campo 2 al 6
+                if ( $i >= 2 && $i <= 6 ) {
+                    $cmp = 7;
+                    for ( $a = 0; $a < count( $campos );
+                    $a++ ) {
+                        $dato = $campos[$a];
+                        $sheet->setCellValue( "{$letraC}{$cmp}", "{$dato}" );
+                        $spreadsheet->getActiveSheet()->getStyle( "{$letraC}{$cmp}" )->applyFromArray( $styleArray );
+                        $cmp++;
+                    }
+                    $letraC++;
+                }
+                //Campo 7
+                if ( $i == 7 ) {
+                    for ( $c = 0; $c < 3; $c++ ) {
+                        $cmp = 7;
+                        for ( $a = 0; $a < count( $campos );
+                        $a++ ) {
+                            $dato = $campos[$a];
+                            $dat = $dato[$c];
+                            $color = "";
+                            $texto_color = "";
+                            if ( $c == 2 ) {
+                                $color = "C00000";
+                                $spreadsheet->getActiveSheet()->getStyle( "{$letraH}{$cmp}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+                            }
+                            if ( $c == 1 ) {
+                                $color = "fdd300";
+                                $spreadsheet->getActiveSheet()->getStyle( "{$letraH}{$cmp}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+                            }
+                            if ( $c == 0 ) {
+                                $color = "86F200";
+                                $spreadsheet->getActiveSheet()->getStyle( "{$letraH}{$cmp}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+                            }
+                            $sheet->setCellValue( "{$letraH}{$cmp}", "{$dat}" );
+                            $spreadsheet->getActiveSheet()->getStyle( "{$letraH}{$cmp}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( "{$color}" );
+                            $spreadsheet->getActiveSheet()->getStyle( "{$letraH}{$cmp}" )->applyFromArray( $styleArray );
+                            $cmp++;
+                        }
+                        $letraH++;
+                    }
+                }
+                //Campo 8 al 12
+                if ( $i >= 8 ) {
+                    for ( $c = 0; $c < 12; $c++ ) {
+                        $cmp = 7;
+                        for ( $a = 0; $a < count( $campos );
+                        $a++ ) {
+                            $dato = $campos[$a];
+                            $dat = ( $dato[$c] != "" ) ? "{$dato[$c]}%" : "0%";
+                            $sheet->setCellValue( "{$letraK}{$cmp}", "{$dat}" );
+                            $spreadsheet->getActiveSheet()->getStyle( "{$letraK}{$cmp}" )->getAlignment()->setHorizontal( 'center' );
+                            $spreadsheet->getActiveSheet()->getStyle( "{$letraK}{$cmp}" )->applyFromArray( $styleArray );
+                            $cmp++;
+                        }
+                        $letraK++;
+                    }
+                }
+            }
+            //Promedios
+            $cmp = 7;
+            $letraK = "K";
+            $prom = explode( "|", $promedio );
+            for ( $a = 0; $a < count( $prom );
+            $a++ ) {
+                $sheet->setCellValue( "W{$cmp}", "{$prom[$a]}" );
+                $spreadsheet->getActiveSheet()->getStyle( "W{$cmp}" )->getAlignment()->setHorizontal( 'center' );
+                $spreadsheet->getActiveSheet()->getStyle( "W{$cmp}" )->applyFromArray( $styleArray );
+                $cmp++;
+            }
+            //Resultados
+            $res = explode( "|", $resultado );
+            for ( $i = 0; $i < 13; $i++ ) {
+                $color = "C00000";
+                $spreadsheet->getActiveSheet()->getStyle( "{$letraK}{$cmp}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+                $dato = floatval( $res[$i] );
+                if ( $dato >= 33 ) {
+                    $color = "fdd300";
+                    $spreadsheet->getActiveSheet()->getStyle( "{$letraK}{$cmp}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+                }
+                if ( $dato >= 67 ) {
+                    $color = "86F200";
+                    $spreadsheet->getActiveSheet()->getStyle( "{$letraK}{$cmp}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+                }
+                $sheet->setCellValue( "{$letraK}{$cmp}", "{$dato}%" );
+                $spreadsheet->getActiveSheet()->getStyle( "{$letraK}{$cmp}" )->getAlignment()->setHorizontal( 'center' );
+                $spreadsheet->getActiveSheet()->getStyle( "{$letraK}{$cmp}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( "{$color}" );
+                $spreadsheet->getActiveSheet()->getStyle( "{$letraK}{$cmp}" )->applyFromArray( $styleArray );
+                $letraK++;
+            }
+            //Total final
+            $total = floatval( $res[13] );
+            $cmp_total = ( $cmp + 1 );
+            $color_total = "C00000";
+            $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            if ( $total >= 33 ) {
+                $color_total = "fdd300";
+                $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+            }
+            if ( $total >= 67 ) {
+                $color_total = "86F200";
+                $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+            }
+            $sheet->setCellValue( "U{$cmp_total}", "{$total}%" );
+            $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( "{$color_total}" );
+            $spreadsheet->getActiveSheet()->mergeCells( "U{$cmp_total}:W{$cmp_total}" );
+            $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}:W{$cmp_total}" )->applyFromArray( $styleArray );
+            //Armar reporte
+            $writer = new Xlsx( $spreadsheet );
+            ob_start();
+            $writer->save( 'php://output' );
+            $contenido = ob_get_clean();
+            $excelBase64 = base64_encode( $contenido );
+            $excel = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' . $excelBase64;
+            $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $excel, 'nombre' => $razon_social, 'tipo' => 'TableroIndicadores', 'ext' => '.xlsx', 'anio' => $anio] );
+        } catch ( ValidacionExcepcion $error ) {
+            $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
+        }
+    }
 }
 
 $controlador = new GestionUsuarioControlador();

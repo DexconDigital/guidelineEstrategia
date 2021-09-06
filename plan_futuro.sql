@@ -1,2 +1,1 @@
-ALTER TABLE `empresa` CHANGE `horizonte_noanios` `horizonte_noanios` VARCHAR(11) NULL DEFAULT NULL;
-ALTER TABLE `estrategias` ADD `cmi` TEXT NULL DEFAULT NULL AFTER `cmi_objetivos`;
+ALTER TABLE `estrategias` CHANGE `cmi` `cmi` LONGTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;

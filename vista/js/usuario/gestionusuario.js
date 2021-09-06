@@ -5,9 +5,9 @@ var usuarioModelo = {
     listaBCG: [],
     listaFuturo: [],
     listaObjetivos: [],
+    listaIndicadores: [],
     pos: -1
 };
-
 var gestionUsuario = {
     constructor: function () {
         gestionUsuario.consultadatos();
@@ -180,8 +180,8 @@ var gestionUsuario = {
         $('#nit').val(datos.nit);
         $('#razon_social').val(datos.razon_social);
         $('#fecha').val(datos.fecha);
-        $('#horizonte_inicial').val(datos.horizonte_inicial);
-        $('#horizonte_final').val(datos.horizonte_final);
+        $('#horizonte_inicial').datepicker('setDate', datos.horizonte_inicial);
+        $('#horizonte_final').datepicker('setDate', datos.horizonte_final);
         $('#horizonte_noanios').val(datos.horizonte_noanios);
         $('#color').val(datos.color);
         $('#vision_text').val(datos.vision);
@@ -1682,9 +1682,11 @@ var gestionUsuario = {
         anio.datepicker({
             minViewMode: 2,
             format: 'yyyy',
-        }).val((new Date).getFullYear());
+        });
+        anio.datepicker('setDate', 'now');
         $(".anio_indicador").html(anio.val());
         var indicador_general = datos.cmi;
+        usuarioModelo.listaIndicadores = datos.cmi;
         var datac = 1;
         var tabla_none = $('.indicadorestabla' + datac).find(".indicadorvacioespecial0");
         var tabla_estr = $('.indicadorestabla' + datac).find(".indicadorvacio");
@@ -1725,6 +1727,49 @@ var gestionUsuario = {
             }
             $('.indicadordatos' + idx).append(cmp);
             gestionUsuario.imprimirIndicadores();
+        });
+        //reportes
+        $('.cmi_reporte').click(function (e) {
+            e.stopImmediatePropagation();
+            var idx = $(this).attr("data-reporte");
+            var anio = $('.anio_tabla').val();
+            var cadena = "";
+            var promedios = "";
+            var total = $(".indicadorestabla1 .cmi_total").text().slice(0, -1);
+            for (var i = 0; i < 13; i++) {
+                var valor = $(".indicadorestabla1 .pos" + i).text().slice(0, -1);
+                cadena += valor + "|";
+            }
+            $('.indicadorestabla1 .groupmes .data-fila').each(function () {
+                promedios += $(this).val() + "|";
+            });
+            cadena += total;
+            var totalpromedio = promedios.slice(0, -1);
+            var data = {
+                'datos_anios': usuarioModelo.listaIndicadores[anio],
+                'resultado': cadena,
+                'anio': anio,
+                'promedio': totalpromedio,
+                'razon_social': usuarioModelo.listaUsuario.razon_social
+            }
+            if (idx == "pdf") {
+                app.ajax('../controlador/GestionUsuarioControlador.php?opcion=indicadores_pdf', data, gestionUsuario.respuestaGenerarReporte);
+                Swal.fire({
+                    title: "Generando reporte...",
+                    text: "Espera un momento",
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                });
+            }
+            if (idx == "excel") {
+                app.ajax('../controlador/GestionUsuarioControlador.php?opcion=indicadores_excel', data, gestionUsuario.respuestaGenerarReporte);
+                Swal.fire({
+                    title: "Generando reporte...",
+                    text: "Espera un momento",
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                });
+            }
         });
     },
     indicadoresVacios: function (tabla_none, tabla_estr, tablaespecial1_estr, tablaespecial2_estr) {
@@ -1992,6 +2037,7 @@ var gestionUsuario = {
             alerta.html("");
             var general = cadena.slice(0, -1);
             var data = {
+                'anio': anio,
                 'general': general,
                 'id_empresa': usuarioModelo.listaUsuario.id_empresa
             }
@@ -2007,15 +2053,16 @@ var gestionUsuario = {
         if (datos.color != "" && datos.color != null) {
             //color general de vistas
             color_empresa.removeClass("bg-gradient-primary text-light");
+            $(".color-sidebar").remove();
             color_empresa.css("background-color", color);
             var texto_color = gestionUsuario.validarColor(color_empresa.css("background-color")) ? 'white' : 'black';
             color_link.css("color", texto_color);
             color_icono1.css("color", texto_color);
             color_empresa.css("color", texto_color);
             //iconos after
-            body.append('<style>.sidebar-dark .nav-item .nav-link[data-toggle="collapse"]::after{color: ' + texto_color + ';}</style>');
-            body.append('<style>.sidebar-dark #sidebarToggle::after{color: ' + texto_color + ';}</style>');
-            body.append('<style>.sidebar-dark.toggled #sidebarToggle::after{color: ' + texto_color + ';}</style>');
+            body.append('<style class="color-sidebar">.sidebar-dark .nav-item .nav-link[data-toggle="collapse"]::after{color: ' + texto_color + ';}</style>');
+            body.append('<style class="color-sidebar">.sidebar-dark #sidebarToggle::after{color: ' + texto_color + ';}</style>');
+            body.append('<style class="color-sidebar">.sidebar-dark.toggled #sidebarToggle::after{color: ' + texto_color + ';}</style>');
         } else {
             color_empresa.addClass("bg-gradient-primary text-light")
         }
@@ -2109,9 +2156,10 @@ var gestionUsuario = {
     },
     respuestaGenerarReporte: function (respuesta) {
         if (respuesta.codigo == 1) {
+            var anio = (respuesta.anio != undefined) ? respuesta.anio : "";
             var a = document.createElement("a");
             a.href = respuesta.reporte;
-            a.download = "Reporte_" + respuesta.tipo + "_" + respuesta.nombre + respuesta.ext;
+            a.download = "Reporte_" + respuesta.tipo + "_" + anio + "_" + respuesta.nombre + respuesta.ext;
             a.click();
             swal.close()
         } else {

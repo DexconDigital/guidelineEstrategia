@@ -2095,6 +2095,13 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             <span class="input-group-text text-negro" id="basic-addon3">Seleccione el año a editar</span>
                         </div>
                         <input id="anio_tabla" class="form-control form-control anio_tabla col-3 bg-white" type="number" min="1900" max="2099" step="1">
+                        <div class="input-group-append">
+                            <button class="btn color-empresa dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reportes</button>
+                            <div class="dropdown-menu p-0">
+                                <a class="dropdown-item cmi_reporte" data-reporte="pdf" href="#!">PDF</a>
+                                <a class="dropdown-item cmi_reporte" data-reporte="excel" href="#!">Excel</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="container-fluid table-responsive indicadortablas indicadorestabla1">
                         <div class="row flex-nowrap text-negro header">
