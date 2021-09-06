@@ -6,6 +6,7 @@ var usuarioModelo = {
     listaFuturo: [],
     listaObjetivos: [],
     listaIndicadores: [],
+    cambios: 0,
     pos: -1
 };
 var gestionUsuario = {
@@ -30,6 +31,8 @@ var gestionUsuario = {
         $('.grabar_futuro').on('click', gestionUsuario.agregar_Futuro);
         $('.grabar_objetivos').on('click', gestionUsuario.agregar_Objetivos);
         $('.grabar_cmi').on('click', gestionUsuario.agregar_CMI);
+        $('#usuarios').on('click', gestionUsuario.consultardatosUsuarios);
+        gestionUsuario.modalCambiosDiagnostico();
         $('.yearpicker').datepicker({
             minViewMode: 2,
             format: 'yyyy'
@@ -64,8 +67,6 @@ var gestionUsuario = {
         $('body').css('overflow', 'visible');
         if (datos.usuario !== "Dexcon") {
             $('#usuarios').remove();
-        } else {
-            $('#usuarios').on('click', gestionUsuario.consultardatosUsuarios);
         }
         //cargar empresa
         gestionUsuario.datosempresa(datos);
@@ -539,7 +540,7 @@ var gestionUsuario = {
             gestionUsuario.imprimirDiagnostico(cuerpo);
             //Confirmación cerrar
             tabla_pci.find('.general').change(function () {
-                $("#modalpci").find(".cerrar").addClass("true")
+                usuarioModelo.cambios = 1;
             });
         }
         //añadir PCI
@@ -581,7 +582,7 @@ var gestionUsuario = {
             gestionUsuario.imprimirDiagnostico(cuerpo);
             //Confirmación cerrar
             tabla_poam.find('.general').change(function () {
-                $("#modalpoam").find(".cerrar").addClass("true")
+                usuarioModelo.cambios = 1;
             });
         }
         //añadir POAM
@@ -634,7 +635,7 @@ var gestionUsuario = {
             cuerpo.parent().find('tfoot .total_general_' + tablas[a]).text(resultado_final);
         }
         $('#dofa_text').keydown(function () {
-            $("#modaldofa").find(".cerrar").addClass("true");
+            usuarioModelo.cambios = 1;
         });
     },
     datosDofaAnalisis: function (dofa_analisis) {
@@ -793,8 +794,6 @@ var gestionUsuario = {
         var sum_deb_tot = 0;
         var cerrar = $(".cerrar");
         var estado = 0;
-        //confirmar cerrar ventana
-        gestionUsuario.modalCambiosDiagnostico();
         //Calcular fila fortaleza
         $('.' + cuerpo + ' tbody tr').each(function (index, tr) {
             var sum1 = 0;
@@ -1017,7 +1016,7 @@ var gestionUsuario = {
         });
         //Confirmación cerrar
         $('.listaseguimientos .general').change(function () {
-            $("#modalseguimientos").find(".cerrar").addClass("true");
+            usuarioModelo.cambios = 1;
         });
     },
     calcularSeguimiento: function (e) {
@@ -1027,8 +1026,6 @@ var gestionUsuario = {
         var pie = $('.listaseguimientos tfoot tr td.totalgeneral');
         var color = "#C63430";
         var text_color = "white";
-        //confirmar cerrar ventana
-        gestionUsuario.modalCambiosDiagnostico();
         //Calcular fila
         $('.listaseguimientos tr:has(td):not(:last)').each(function () {
             var sum = 0;
@@ -1156,7 +1153,7 @@ var gestionUsuario = {
             });
             //Confirmación cerrar
             tabla_bcg.find('.general').keyup(function () {
-                $("#modalbcg").find(".cerrar").addClass("true");
+                usuarioModelo.cambios = 1;
             });
         }
         //añadir bcg
@@ -1456,7 +1453,7 @@ var gestionUsuario = {
             });
             //Confirmación cerrar
             tabla_estr.find('.general').keyup(function () {
-                $("#modalestrategia").find(".cerrar").addClass("true");
+                usuarioModelo.cambios = 1;
             });
         }
 
@@ -1923,7 +1920,7 @@ var gestionUsuario = {
         });
         //Confirmación cerrar
         tabla.find('.general').keyup(function () {
-            $("#modalcmi").find(".cerrar").addClass("true");
+            usuarioModelo.cambios = 1;
         });
     },
     calcularIndicadores: function (e) {
@@ -1946,8 +1943,6 @@ var gestionUsuario = {
             "suma11": 0,
             "suma12": 0
         };
-        //confirmar cerrar ventana
-        gestionUsuario.modalCambiosDiagnostico();
         //Calcular fila
         $('.indicadorestabla1 .groupmes').each(function () {
             var sum = 0;
@@ -2173,12 +2168,10 @@ var gestionUsuario = {
         }
     },
     modalCambiosDiagnostico: function () {
-        var cerrar = $(".cerrar");
-        //confirmar cerrar ventana
+        var btn_cerrar = $(".cerrar");
         var modales = $(".modalvalidacion");
-        cerrar.click(function () {
-            if (!cerrar.hasClass("true")) {
-                cerrar.removeClass("true");
+        btn_cerrar.click(function () {
+            if (usuarioModelo.cambios != 1) {
                 modales.modal('hide');
             } else {
                 Swal.fire({
@@ -2192,7 +2185,7 @@ var gestionUsuario = {
                     cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        cerrar.removeClass("true")
+                        usuarioModelo.cambios = 0;
                         modales.modal('hide');
                     }
                 })
