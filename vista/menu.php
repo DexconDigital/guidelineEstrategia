@@ -19,9 +19,8 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link rel="stylesheet" href="../css/dist/sweetalert.css">
     <!-- Custom styles for this template-->
-    <link href="../css/sb-admin-2.css?v=2" rel="stylesheet">
-    <link href="../css/styles.css?v=2" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="../css/sb-admin-2.css?v=3" rel="stylesheet">
+    <link href="../css/styles.css?v=4" rel="stylesheet">
 </head>
 <div class="loader">
     <img class="preload" src="../img/preloader.gif">
@@ -59,11 +58,10 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                 </a>
                 <div id="collapsedos" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalpci" id="pci">Diagnostico PCI</a>
-                        <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalpoam" id="poam">Diagnostico POAM</a>
+                        <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalpci" id="pci">Diagnóstico PCI</a>
+                        <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalpoam" id="poam">Diagnóstico POAM</a>
                         <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modaldofa" id="dofa">DOFA resumido</a>
                         <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modaldofaanalisis" id="dofaana">DOFA análisis</a>
-                        <a class="collapse-item estrategias" href="#!" data-toggle="modal" data-target="#modalseguimientos" id="btnseguimientos">Seguimientos</a>
                         <a class="collapse-item estrategias" href="#!" data-toggle="modal" data-target="#modalfuerzas" id="btnfuerzas">Fuerzas-Porter</a>
                         <a class="collapse-item estrategias" href="#!" data-toggle="modal" data-target="#modalbcg" id="btnbcg">Matriz BCG</a>
                     </div>
@@ -76,7 +74,8 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                 </a>
                 <div id="collapsetres" class="collapse" aria-labelledby="headingtres" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item estrategias" href="#!" data-toggle="modal" data-target="#modalprincipios2" id="btnprincipios2">Principios Corporativos</a>
+                        <!--<a class="collapse-item estrategias" href="#!" data-toggle="modal" data-target="#modalprincipios2" id="btnprincipios2">Principios Corporativos</a>-->
+                        <a class="collapse-item estrategias" href="#!" data-toggle="modal" data-target="#modalseguimientos" id="btnseguimientos">Seguimientos</a>
                         <a class="collapse-item estrategias" href="#!" data-toggle="modal" data-target="#modalestrategias" id="btnestrategias">Estrategias</a>
                     </div>
                 </div>
@@ -290,12 +289,16 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                 <div class="modal-body text-negro">
                     <h5 class="text-center">Misión</h5>
                     <div class="container">
-                        <p class="text-center">Debe responder a:</p>
-                        <p>¿En que negocio estamos?: Cual es el negocio?;
-                            Para que existe la empresa? Propositos;
-                            Cuales son los elementos diferenciales?: Aptitud distintiva. Quienes son nuestros clientes?;
-                            Cuales son los productos o servicios?;
-                            Cuales son los mercados presentes y futuros</p>
+                        <p>Debe responder a:</p>
+                        <ul>
+                            <li>¿En que negocio estamos?</li>
+                            <li>¿Cual es el negocio?</li>
+                            <li>¿Para que existe la empresa? Propositos</li>
+                            <li>Cuales son los elementos diferenciales?: Aptitud distintiva</li>
+                            <li>¿Quienes son nuestros clientes?</li>
+                            <li>¿Cuales son los productos o servicios?</li>
+                            <li>¿Cuales son los mercados presentes y futuros?</li>
+                        </ul>
                         <p class="mt-2"><b>¿Quién formula la mision? La formulación de la misión es responsabilidad de la alta dirección de la empresa o de la unidad estratégica de negocio.</b></p>
                         <h5 class="text-center mt-4">Formule su Misión:</h5>
                         <textarea class="form-control" id="mision_text"></textarea>
@@ -369,14 +372,14 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                     <thead>
                                         <tr>
                                             <th class="sticky-top color-empresa w-1"></th>
-                                            <th class="sticky-top color-empresa">Principio/grupo</th>
+                                            <th class="sticky-top color-empresa">Principio / Grupo</th>
                                             <th class="calculo sticky-top color-empresa">Sociedad</th>
                                             <th class="calculo sticky-top color-empresa">Estado</th>
                                             <th class="calculo sticky-top color-empresa">Familia</th>
                                             <th class="calculo sticky-top color-empresa">Clientes</th>
                                             <th class="calculo sticky-top color-empresa">Proveedores</th>
                                             <th class="calculo sticky-top color-empresa">Colaboradores</th>
-                                            <th class="calculo sticky-top color-empresa">Accionistas/dueños</th>
+                                            <th class="calculo sticky-top color-empresa">Accionistas / Dueños</th>
                                             <th class="text-center w-1 sticky-top color-empresa"><a href="#!" class="btn btn-success btn-sm addRowaxio">Agregar</a></th>
                                         </tr>
                                     </thead>
@@ -459,7 +462,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
             </div>
         </div>
     </div>
-    <!-- Modal Diagnostico interno ( PCI ) -->
+    <!-- Modal Diagnóstico interno ( PCI ) -->
     <div class="modal fade modalvalidacion" id="modalpci" tabindex="-1" role="dialog" aria-labelledby="exampleModalpci" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -505,21 +508,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapci1 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">1. Capacidad directiva</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 titulo text-center">1. Capacidad directiva</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
-                                                    <th class="sticky-top color-empresa" colspan="3">Descripción de factores</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa" colspan="3">Descripción de factores</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_pci1" data-tabla="listapci1"></tbody>
+                                            <tbody class="diag_general cuerpo_pci1" data-tabla="listapci1"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación capacidad directiva</td>
@@ -551,21 +554,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapci2 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">2. Capacidad competitiva</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">2. Capacidad competitiva</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
-                                                    <th class="sticky-top color-empresa" colspan="3">Descripción de factores</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa" colspan="3">Descripción de factores</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_pci2" data-tabla="listapci2"></tbody>
+                                            <tbody class="diag_general cuerpo_pci2" data-tabla="listapci2"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación capacidad competitiva</td>
@@ -597,21 +600,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapci3 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">3. Capacidad financiera</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">3. Capacidad financiera</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
-                                                    <th class="sticky-top color-empresa" colspan="3">Descripción de factores</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa" colspan="3">Descripción de factores</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_pci3" data-tabla="listapci3"></tbody>
+                                            <tbody class="diag_general cuerpo_pci3" data-tabla="listapci3"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación capacidad financiera</td>
@@ -643,21 +646,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapci4 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">4. Capacidad tecnológica</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">4. Capacidad tecnológica</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
-                                                    <th class="sticky-top color-empresa" colspan="3">Descripción de factores</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa" colspan="3">Descripción de factores</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_pci4" data-tabla="listapci4"></tbody>
+                                            <tbody class="diag_general cuerpo_pci4" data-tabla="listapci4"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación capacidad tecnológica</td>
@@ -689,21 +692,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapci5 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">5. Capacidad del talento humano</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">5. Capacidad del talento humano</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
-                                                    <th class="sticky-top color-empresa" colspan="3">Descripción de factores</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa" colspan="3">Descripción de factores</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_pci5" data-tabla="listapci5"></tbody>
+                                            <tbody class="diag_general cuerpo_pci5" data-tabla="listapci5"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación capacidad de talento humano</td>
@@ -727,7 +730,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
             </div>
         </div>
     </div>
-    <!-- Modal Diagnostico externo ( POAM ) -->
+    <!-- Modal Diagnóstico externo ( POAM ) -->
     <div class="modal fade modalvalidacion" id="modalpoam" tabindex="-1" role="dialog" aria-labelledby="exampleModalpoam" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -773,21 +776,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapoam1 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">1. Factores económicos</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">1. Factores económicos</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
                                                     <th class="sticky-top color-empresa" colspan="3">Descripción del diagnóstico</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_poam1" data-tabla="listapoam1"></tbody>
+                                            <tbody class="diag_general cuerpo_poam1" data-tabla="listapoam1"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación Factores económicos</td>
@@ -803,7 +806,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                 </div>
                             </div>
                         </div>
-                        <!-- 2. Factores politicos -->
+                        <!-- 2. Factores políticos -->
                         <div class="tab-pane fade" id="pills-Politicos" role="tabpanel" aria-labelledby="pills-Politicos-tab">
                             <div id="POAM2" class="mt-3 border p-2">
                                 <div class="table-responsive">
@@ -819,24 +822,24 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapoam2 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">2. Factores politicos</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">2. Factores políticos</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
                                                     <th class="sticky-top color-empresa" colspan="3">Descripción del diagnóstico</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_poam2" data-tabla="listapoam2"></tbody>
+                                            <tbody class="diag_general cuerpo_poam2" data-tabla="listapoam2"></tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="3" class="sticky-bottom color-empresa">Calificación Factores politicos</td>
+                                                    <td colspan="3" class="sticky-bottom color-empresa">Calificación Factores políticos</td>
                                                     <td colspan="3" class="text-right total_fortaleza sticky-bottom color-empresa"></td>
                                                     <td colspan="3" class="text-right total_debilidad sticky-bottom color-empresa"></td>
                                                 </tr>
@@ -865,21 +868,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapoam3 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">3. Factores sociales</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">3. Factores sociales</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
                                                     <th class="sticky-top color-empresa" colspan="3">Descripción del diagnóstico</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_poam3" data-tabla="listapoam3"></tbody>
+                                            <tbody class="diag_general cuerpo_poam3" data-tabla="listapoam3"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación factores sociales</td>
@@ -911,21 +914,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapoam4 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">4. Factores tecnológicos</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">4. Factores tecnológicos</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
                                                     <th class="sticky-top color-empresa" colspan="3">Descripción del diagnóstico</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_poam4" data-tabla="listapoam4"></tbody>
+                                            <tbody class="diag_general cuerpo_poam4" data-tabla="listapoam4"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación factores tecnológicos</td>
@@ -957,21 +960,21 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm w-100 listapoam5 mw-45">
                                             <thead>
                                                 <tr class="color-empresa">
-                                                    <th colspan="3" class="w-35 titulo">5. Factores geograficos</th>
-                                                    <th colspan="3" class="w-35">Fortaleza</th>
-                                                    <th colspan="3" class="w-35">Debilidad</th>
+                                                    <th colspan="3" class="w-35 text-center titulo">5. Factores geograficos</th>
+                                                    <th colspan="3" class="w-35 text-center">Fortaleza</th>
+                                                    <th colspan="3" class="w-35 text-center">Debilidad</th>
                                                 </tr>
                                                 <tr class="text-light">
                                                     <th class="sticky-top color-empresa" colspan="3">Descripción del diagnostico</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
-                                                    <th class="sticky-top color-empresa">Nivel</th>
-                                                    <th class="sticky-top color-empresa">Impacto</th>
-                                                    <th class="sticky-top color-empresa">N*1</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
+                                                    <th class="sticky-top text-center color-empresa">Nivel</th>
+                                                    <th class="sticky-top text-center color-empresa">Impacto</th>
+                                                    <th class="sticky-top text-center color-empresa" title="Nivel * Impacto">Calificación</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="cuerpo_poam5" data-tabla="listapoam5"></tbody>
+                                            <tbody class="diag_general cuerpo_poam5" data-tabla="listapoam5"></tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3" class="sticky-bottom color-empresa">Calificación factores geograficos</td>
@@ -1090,8 +1093,8 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
         </div>
     </div>
     <!-- Modal DOFA análisis -->
-    <div class="modal fade modalvalidacion" id="modaldofaanalisis" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-xl" role="document">
+    <div class="modal fade modalvalidacion modal-fullscreen" id="modaldofaanalisis" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-negro" id="exampleModalLabel2">DOFA: hoja de trabajo</h5>
@@ -1102,6 +1105,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                 <div class="modal-body text-negro">
                     <div class="text-justify mb-3">
                         <span>INSTRUCCIÓN: Con base en los resultados del DIAGNOSTICO PCI y el DIAGNOSTICO POAM haga lo siguiente:</span>
+                        <a tabindex="0" href="#!" class="text-warning align-middle" role="button" data-toggle="popover" data-trigger="hover" title="Advertencia" data-content="Una vez guarde, no se podrá modificar los resultados de los diagnosticos PCI y POAM."><i class="fas fa-info-circle fa-2x"></i></a>
                     </div>
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -1112,6 +1116,15 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="btn color-empresa m-1" id="pills-ddoda-tab" data-toggle="pill" href="#pills-ddoda" type="button" role="tab" aria-controls="pills-ddoda" aria-selected="true" title="3. Debilidades, Refuerzo o mejora, Mejora/ ó retirata">3. D/DO/DA</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button type="button" class="btn color-empresa m-1 dropdown-toggle bcg_reportes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Reportes
+                            </button>
+                            <div class="dropdown-menu p-0">
+                                <a class="dropdown-item dofa_reporte" data-reporte="pdf" href="#!">PDF</a>
+                                <a class="dropdown-item dofa_reporte" data-reporte="excel" href="#!">Excel</a>
+                            </div>
                         </li>
                     </ul>
                     <div class="alerta"></div>
@@ -1291,7 +1304,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-negro" id="exampleModalLabel2">Diagnistico estratégico según michel porter</h5>
+                    <h5 class="modal-title text-negro" id="exampleModalLabel2">Diagnóstico estratégico según michel porter</h5>
                     <button class="close cerrar" type="button" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -1307,12 +1320,12 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                 <table class="table text-negro table-bordered table-sm w-100 listafuerzas mw-45">
                                     <thead>
                                         <tr>
-                                            <th colspan="3" class="text-center color-empresa">Diagnostico estratégico de la compañía según el enfoque de Michael Porter</th>
+                                            <th colspan="3" class="text-center color-empresa">Diagnóstico estratégico de la compañía según el enfoque de Michael Porter</th>
                                         </tr>
                                         <tr>
                                             <th class="sticky-top color-empresa align-middle w-1">#</th>
                                             <th class="sticky-top color-empresa align-middle text-center">Las cinco fuerzas de Michael Porter</th>
-                                            <th class="sticky-top color-empresa align-middle text-center">Diagnostico de la compañia</th>
+                                            <th class="sticky-top color-empresa align-middle text-center">Diagnóstico de la compañia</th>
                                         </tr>
                                     </thead>
                                     <tbody class="cuerpo_fuerzas">
@@ -1583,14 +1596,14 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                     <thead>
                                         <tr>
                                             <th class="sticky-top color-empresa w-1"></th>
-                                            <th class="sticky-top color-empresa">Principio/grupo</th>
+                                            <th class="sticky-top color-empresa">Principio / Grupo</th>
                                             <th class="calculo sticky-top color-empresa">Sociedad</th>
                                             <th class="calculo sticky-top color-empresa">Estado</th>
                                             <th class="calculo sticky-top color-empresa">Familia</th>
                                             <th class="calculo sticky-top color-empresa">Clientes</th>
                                             <th class="calculo sticky-top color-empresa">Proveedores</th>
                                             <th class="calculo sticky-top color-empresa">Colaboradores</th>
-                                            <th class="calculo sticky-top color-empresa">Accionistas/dueños</th>
+                                            <th class="calculo sticky-top color-empresa">Accionistas / Dueños</th>
                                             <th class="text-center w-1 sticky-top color-empresa"><a href="#!" class="btn btn-success btn-sm addRowaxio2">Agregar</a></th>
                                         </tr>
                                     </thead>
@@ -1863,7 +1876,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                     <div class="row text-negro">
                                         <div class="col-xl-2 text-center p-0">
                                             <div class="d-block color-empresa border p-2">Tipo</div>
-                                            <div class="rounded-0 form-control form-control-sm pb-5 text-negro">Estrategias según Michael Porter</div>
+                                            <div class="rounded-0 form-control form-control-sm h-cal text-negro d-flex align-items-center">Estrategias según Michael Porter</div>
                                         </div>
                                         <div class="col-xl-3 p-0">
                                             <div class="d-block color-empresa border text-center p-2">Nombre</div>
@@ -1964,7 +1977,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             <button class="btn color-empresa m-1" id="pills-promesa-tab" data-toggle="pill" href="#pills-promesa" type="button" role="tab" aria-controls="pills-promesa" aria-selected="true">Promesa de servicio</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="btn color-empresa m-1" id="pills-objetivos-tab" data-toggle="pill" href="#pills-objetivos" type="button" role="tab" aria-controls="pills-objetivos" aria-selected="true">Objetivos estratégicos y/o estrategias</button>
+                            <button class="btn color-empresa m-1" id="pills-objetivos-tab" data-toggle="pill" href="#pills-objetivos" type="button" role="tab" aria-controls="pills-objetivos" aria-selected="true">Objetivos</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button type="button" class="btn color-empresa m-1 dropdown-toggle bcg_reportes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -2038,15 +2051,14 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                 <button class="btn btn-success grabar_futuro">Grabar</button>
                             </div>
                         </div>
-                        <!-- 4.Objetivos estrategicos y/o estrategias -->
+                        <!-- 4.Objetivos estratégicos y/o estrategias -->
                         <div class="tab-pane fade" id="pills-objetivos" role="tabpanel" aria-labelledby="pills-objetivos-tab">
                             <div id="objetivos">
-                                <p>Instrucción: Transfiera las estrategias descritas y/o definidas en el cuadro de DEFINICION DE ESTRATEGIAS DE LA ORGANIZACIÓN a la celda que corresponda según la perspectiva del Balanced Scorecard.</p>
                                 <div class="table-responsive">
                                     <table class="text-negro table-bordered table-sm w-100">
                                         <thead>
                                             <tr>
-                                                <th class="w-100">Objetivos estrategicos y/o estrategias</th>
+                                                <th class="w-100">Objetivos estratégicos y/o estrategias</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -2278,8 +2290,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="../css/dist/sweetalert.js"></script>
     <script src="js/menu.js?v=2" type="text/javascript"></script>
-    <script src="../js/sb-admin-2.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <script src="../js/sb-admin-2.js?v=1"></script>
     <script src="js/usuario/gestionusuario.js?v=<?php echo uniqid(); ?>" type="text/javascript"></script>
 
 </body>

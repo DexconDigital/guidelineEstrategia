@@ -1,11 +1,11 @@
 /* global app */
-
 var usuarioModelo = {
     listaUsuario: [],
     listaBCG: [],
     listaFuturo: [],
     listaObjetivos: [],
     listaIndicadores: [],
+    listaDofa: [],
     cambios: 0,
     pos: -1
 };
@@ -33,6 +33,7 @@ var gestionUsuario = {
         $('.grabar_cmi').on('click', gestionUsuario.agregar_CMI);
         $('#usuarios').on('click', gestionUsuario.consultardatosUsuarios);
         gestionUsuario.modalCambiosDiagnostico();
+        $('[data-toggle="popover"]').popover()
         $('.yearpicker').datepicker({
             minViewMode: 2,
             format: 'yyyy'
@@ -60,8 +61,8 @@ var gestionUsuario = {
         app.ajax('../controlador/GestionUsuarioControlador.php?opcion=consultar_datos', data, gestionUsuario.respuestaConsultadatos);
     },
     respuestaConsultadatos: function (respuesta) {
-        var datos = respuesta.datos;
-        usuarioModelo.listaUsuario = datos;
+        usuarioModelo.listaUsuario = respuesta.datos;
+        var datos = usuarioModelo.listaUsuario;
         $('#frm_empresa1').trigger("reset");
         $('.loader').fadeOut();
         $('body').css('overflow', 'visible');
@@ -506,10 +507,10 @@ var gestionUsuario = {
     },
     respuestaconsultadatosDiagnostico: function (respuesta) {
         var datos = respuesta.datos;
-        gestionUsuario.datosDofaAnalisis(datos.dofa_analisis);
         gestionUsuario.datosPCI(datos);
         gestionUsuario.datosPOAM(datos);
         gestionUsuario.datosDofaResumido(datos.dofa);
+        gestionUsuario.datosDofaAnalisis(datos.dofa_analisis);
     },
     datosPCI: function (datos) {
         //PCI
@@ -640,12 +641,27 @@ var gestionUsuario = {
     },
     datosDofaAnalisis: function (dofa_analisis) {
         var analisis_general = dofa_analisis;
-        for (var datc = 1; datc <= 3; datc++) {
-            var cantidad = (datc >= 2) ? 3 : 2;
-            var tabla_analisis = $(".listadofa" + datc + " tbody");
+        usuarioModelo.listaDofa = dofa_analisis;
+        var arry_for = [];
+        var arry_deb = [];
+        //Validar si está vacio y traer las calificaciones más relevantes (4, 6 y 9) del PCI y POAM
+        if (analisis_general == null || analisis_general == "") {
+            $('.diag_general .data_mayor').each(function (index, tr) { 
+                var mayor_val = $(this).data("val");
+                var mayor_tipo = $(this).data("tipo");
+                var valor = $(this).find("input.general").val();
+                ( mayor_tipo == "fortaleza" ) ? arry_for.push(valor) : "";
+                ( mayor_tipo == "debilidad" ) ? arry_deb.push(valor) : "";
+
+            });
+        }
+        //Tabla #1
+        for (var datac = 1; datac < 4; datac++) {
+            var cantidad = (datac >= 2) ? 3 : 2;
+            var tabla_analisis = $(".listadofa" + datac + " tbody");
             if (analisis_general != null && analisis_general != "") {
                 tabla_analisis.empty();
-                var analisis = analisis_general[datc];
+                var analisis = analisis_general[datac];
                 for (var a = 0; a < analisis.length; a++) {
                     var datos_analisis = analisis[a];
                     var cantidad_analisis = datos_analisis.length
@@ -654,9 +670,33 @@ var gestionUsuario = {
                 }
             } else {
                 tabla_analisis.empty();
-                var datos = (cantidad > 2) ? ["", "", ""] : ["", ""];
-                var tr = gestionUsuario.campostablaDofaAnalisis(datos, cantidad);
-                tabla_analisis.append(tr);
+                if(datac == 1) {
+                    var count = (arry_for.length > arry_deb.length) ? arry_for.length : arry_deb.length;
+                    for (var i = 0; i < count; i++) {
+                        var dato1 = (arry_for[i] != undefined) ?  arry_for[i] : "";
+                        var dato2 = (arry_deb[i] != undefined) ?  arry_deb[i] : "";
+                        var tr = gestionUsuario.campotabla1DofaAnalisis(dato1, dato2);
+                        tabla_analisis.append(tr);
+                    }
+                }
+                //Fortalezas
+                if(datac == 2) { 
+                    var count = arry_for.length
+                    for (var i = 0; i < count; i++) {
+                        var datos = [arry_for[i], "", ""];
+                        var tr = gestionUsuario.campostablaDofaAnalisis(datos, cantidad);
+                        tabla_analisis.append(tr);
+                    }
+                }
+                //Debilidades
+                if(datac == 3) { 
+                    var count = arry_deb.length
+                    for (var i = 0; i < count; i++) {
+                        var datos = [arry_deb[i], "", ""];
+                        var tr = gestionUsuario.campostablaDofaAnalisis(datos, cantidad);
+                        tabla_analisis.append(tr);
+                    }
+                }
             }
             //remover analisis
             tabla_analisis.on('click', '.remove', function () {
@@ -675,6 +715,45 @@ var gestionUsuario = {
             $('.listadofa' + idx + ' tbody').append(tr);
             gestionUsuario.indiceDofaAnalisis();
         });
+        //reportes
+        $('.dofa_reporte').click(function (e) {
+            e.stopImmediatePropagation();
+            var idx = $(this).attr("data-reporte");
+            var data = {
+                'respuesta': usuarioModelo.listaDofa,
+                'razon_social': usuarioModelo.listaUsuario.razon_social
+            }
+            if (idx == "pdf") {
+                app.ajax('../controlador/GestionUsuarioControlador.php?opcion=dofa_pdf', data, gestionUsuario.respuestaGenerarReporte);
+                Swal.fire({
+                    title: "Generando reporte...",
+                    text: "Espera un momento",
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                });
+            }
+            if (idx == "excel") {
+                app.ajax('../controlador/GestionUsuarioControlador.php?opcion=dofa_excel', data, gestionUsuario.respuestaGenerarReporte);
+                Swal.fire({
+                    title: "Generando reporte...",
+                    text: "Espera un momento",
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                });
+            }
+        });
+    },
+    campotabla1DofaAnalisis: function (dato1, dato2) {
+        var tr = '<tr>' +
+            '<td class="w-1 align-middle"><a href="#" class="text-danger remove"><i class="fa fa-trash"></i></a></td>' +
+            '<td class="w-1 data-fila"></td>' +
+            '<td>' +
+            '<input class="form-control form-control-sm data general" value="' + dato1 + '" /></td>' +
+            '<td class="w-1 data-fila"></td>' +
+            '<td>' +
+            '<input class="form-control form-control-sm data general" value="' + dato2 + '" /></td>' +
+            '</tr>';  
+        return tr;
     },
     campostablaDofaAnalisis: function (datos, cantidad) {
         var tr = '<tr>' +
@@ -794,6 +873,8 @@ var gestionUsuario = {
         var sum_deb_tot = 0;
         var cerrar = $(".cerrar");
         var estado = 0;
+        usuarioModelo.Diagnosticos = [];
+        var arreglo_diagnostico = [];
         //Calcular fila fortaleza
         $('.' + cuerpo + ' tbody tr').each(function (index, tr) {
             var sum1 = 0;
@@ -812,10 +893,20 @@ var gestionUsuario = {
                 sum3 += parseFloat($(this).find('.debilidad.val-3 option:selected').val()) || 0;
                 sum4 += parseFloat($(this).find('.debilidad.val-4 option:selected').val()) || 0;
             });
+            //Resultados en fila
             var sum_fortaleza = parseInt(sum1 * sum2);
             var sum_debilidad = parseInt(sum3 * sum4);
             $(this).find('td.data-fortaleza').html(sum_fortaleza);
             $(this).find('td.data-debilidad').html(sum_debilidad);
+            //Remover clase data_mayor
+            $(this).attr("Class","").attr("data-tipo","").attr("data-val","");
+            //Validar resultados más relevantes (4, 6 y 9) del PCI y POAM
+            if (sum_fortaleza >= 4) {
+                $(this).addClass("data_mayor").attr("data-tipo", "fortaleza").attr("data-val", sum_fortaleza);
+            }
+            if (sum_debilidad >= 4) {
+                $(this).addClass("data_mayor").attr("data-tipo", "debilidad").attr("data-val", sum_debilidad);
+            }
             //Deshabilitar debilidades si hay fortalezas
             if ($(this).find('td.data-fortaleza').text() != "0") {
                 $(this).find(debilidad).attr("disabled", "disabled");
@@ -854,7 +945,7 @@ var gestionUsuario = {
                 var general = (!isNaN(total_debilidad) ? total_debilidad : 0)
                 $('.' + cuerpo + ' tfoot tr td.total_debilidad').html(general + "%");
             });
-
+            //Revisa si todos los campos están llenos
             $(tr).children('td').children('select:not(:disabled)').each(function (td_idx, td) {
                 var val = $(td).val();
                 estado += (val == "0") ? 1 : 0;
@@ -2096,7 +2187,7 @@ var gestionUsuario = {
                 confirmButtonColor: '#71c904',
                 text: respuesta.mensaje
             });
-            $(".cerrar").removeClass("true");
+            usuarioModelo.cambios = 0;
         } else {
             Swal.fire({
                 icon: 'error',
@@ -2117,7 +2208,7 @@ var gestionUsuario = {
                 confirmButtonColor: '#71c904',
                 text: respuesta.mensaje
             });
-            $(".cerrar").removeClass("true");
+            usuarioModelo.cambios = 0;
         } else {
             Swal.fire({
                 icon: 'error',
@@ -2151,10 +2242,10 @@ var gestionUsuario = {
     },
     respuestaGenerarReporte: function (respuesta) {
         if (respuesta.codigo == 1) {
-            var anio = (respuesta.anio != undefined) ? respuesta.anio : "";
+            var anio = (respuesta.anio != undefined) ? respuesta.anio + "_" : "";
             var a = document.createElement("a");
             a.href = respuesta.reporte;
-            a.download = "Reporte_" + respuesta.tipo + "_" + anio + "_" + respuesta.nombre + respuesta.ext;
+            a.download = "Reporte_" + respuesta.tipo + "_" + anio + respuesta.nombre + respuesta.ext;
             a.click();
             swal.close()
         } else {

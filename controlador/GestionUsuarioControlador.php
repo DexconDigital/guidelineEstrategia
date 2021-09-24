@@ -647,7 +647,7 @@ class GestionUsuarioControlador extends GenericoControlador {
                         <table style='width:100%;height: 100%;'>
                             <tr >
                                 <td style='width:40%;border: 0.5px solid #858796;text-align: center;background-color:black; color:white;padding:0;'>{$data_tipo[$i]}</td>
-                                <td style='width:60%;border: 0.5px solid #858796;text-align: center;background-color:; color:;padding:0;'><img style='width:18px;' src='{$ruta}{$data_icono[$i]}.svg'></td>
+                                <td style='width:60%;border: 0.5px solid #858796;text-align: center;padding:0;'><img style='width:18px;' src='{$ruta}{$data_icono[$i]}.svg'></td>
                             </tr>
                             <tr>
                                 <td style='border: 0.5px solid #858796;padding:10px;height:100%;background-color:#{$data_color[$i]}'>{$data_descr[$i]}</td>
@@ -1079,7 +1079,6 @@ class GestionUsuarioControlador extends GenericoControlador {
             $i++ ) {
                 $pos_i = ( $i + 1 );
                 $campo = $objetivos[$i];
-
                 //Indices
                 $sheet->setCellValue( "A{$pos_6_3}", "O{$pos_i}PH" );
                 $sheet->setCellValue( "F{$pos_6_3}", "O{$pos_i}PP" );
@@ -1542,6 +1541,218 @@ class GestionUsuarioControlador extends GenericoControlador {
             $excelBase64 = base64_encode( $contenido );
             $excel = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' . $excelBase64;
             $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $excel, 'nombre' => $razon_social, 'tipo' => 'TableroIndicadores', 'ext' => '.xlsx', 'anio' => $anio] );
+        } catch ( ValidacionExcepcion $error ) {
+            $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
+        }
+    }
+
+    public function dofa_pdf() {
+        try {
+            Validacion::validar( ['respuesta' => 'obligatorio'], $_POST );
+            $resultados = $_POST ['respuesta'];
+            $razon_social = $_POST['razon_social'];
+            $header = '<head> 
+                      <style>
+                            h1 { font-family: chronicle;font-weight: normal; } 
+                            h4 { font-family: chronicle; font-size: 10pt; text-align:center; margin-top: 0; margin-bottom: 0; }
+                            h6 { font-family: chronicle; font-size: 6pt; font-weight: 100; text-align:center; margin-top: 0; margin-bottom: 0;}
+                            table, td{border-collapse: collapse; color: black !important; text-align: center;font-size:12px; }
+                            body {font-family: opensans;}
+                      </style> 
+                   </head>';
+            // Cabecera del documento
+            $cabecera = "<div style='margin-bottom:7px;'> 
+                            <div style='float: left; width: 10%; text-align:left;' > 
+                                <img src='../img/logo.png'>
+                            </div> 
+                            <div style='float:left; vertical-align: top; padding-left: 18px;'>
+                                <h1 style='font-size: 20pt;margin-left:70px;'>DOFA: hoja de trabajo</h1> 
+                            </div>
+                        </div>";
+            $titulos = [
+                1 => [
+                    "O" => "Oportunidades" ,
+                    "A" => "Amenazas"
+                ],
+                2 => [
+                    "F" => "Fortaleza",
+                    "FO" => "Estrategias FO ( Ataque )",
+                    "FA" => "Estrategias FA ( Defensivas )"
+                ],
+                3 => [
+                    "D" => "Debilidades",
+                    "DO" => "Estrategias DO ( Refuerzo ó mejora )",
+                    "DA" => "Estrategias DA ( Mejora/ ó retirata )"
+                ]
+            ];
+            //Cuerpo del documento
+            $tablas = "<table style='width:100%;'>";
+            foreach ( $resultados as $key => $value ) {
+                $dato = $value;
+                $total = count( $titulos[$key] );
+                $tablas .= "<tr>";
+                $tablas .= ( $key == 1 ) ? "<td colspan='2'></td>" : "";
+                foreach ( $titulos[$key] as $indice => $valor ) {
+                    $tablas .=
+                    "<td style='width:1%;background-color:black; color:white;border: 0.5px solid #858796;'>{$indice}</td>
+                    <td style='text-align:center;width:33.33%;background-color:black; color:white;border: 0.5px solid #858796;'>{$valor}</td>";
+                }
+                $tablas .= "<tr>";
+                $a = 1;
+                for ( $i = 0; $i < count( $dato );
+                $i++ ) {
+                    $datos = $dato[$i];
+                    $tablas .= "<tr>";
+                    $tablas .= ( $key == 1 ) ? "<td colspan='2'></td>" : "";
+                    $tablas .= "
+                        <td style='border: 0.5px solid #858796;'>{$a}</td>
+                        <td style='border: 0.5px solid #858796;'>{$datos[0]}</td>
+                        <td style='border: 0.5px solid #858796;'>{$a}</td>
+                        <td style='border: 0.5px solid #858796;'>{$datos[1]}</td>";
+                    $tablas .= ( $key > 1 ) ? "<td style='border: 0.5px solid #858796;'>{$a}</td>
+                                              <td style='border: 0.5px solid #858796;'>{$datos[2]}</td>" : "";
+                    $tablas .= "</tr>";
+                    $a++;
+                }
+            }
+            $tablas .= "</table>";
+            $ehtml =  "<html> 
+                        <body> 
+                            {$cabecera}
+                            {$tablas}
+                            <div style='clear: both; margin: 0pt; padding: 0pt; '></div>
+                        </body>                    
+                  </html>";
+            $mpdf = new \Mpdf\Mpdf( ['mode' => 'utf-8', 'format' => 'A4-L'] );
+            $mpdf->WriteHTML( $ehtml );
+            $pdfString = $mpdf->Output( '', 'S' );
+            $pdfBase64 = base64_encode( $pdfString );
+            $PDF = 'data:application/pdf;base64,' . $pdfBase64;
+            $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $PDF, 'nombre' => $razon_social, 'tipo' => 'DOFA', 'ext' => '.pdf'] );
+        } catch ( ValidacionExcepcion $error ) {
+            $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
+        }
+    }
+
+    public function dofa_excel() {
+        try {
+            Validacion::validar( ['respuesta' => 'obligatorio'], $_POST );
+            $resultados = $_POST ['respuesta'];
+            $razon_social = $_POST['razon_social'];
+            $styleArray = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getActiveSheet()->getStyle( 'A1:R50' )->getAlignment()->setWrapText( true );
+            $spreadsheet->getActiveSheet()->getStyle( "A1" )->getFont()->setSize( 19 )->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( 'A1' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->mergeCells( "A1:F3" );
+            //Logo dexcon
+            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawing->setPath( "../img/logo.png" );
+            $drawing->setName( 'Logo' );
+            $drawing->setCoordinates( 'B1' );
+            $drawing->setWidthAndHeight( 100, 100 );
+            $drawing->setWorksheet( $spreadsheet->setActiveSheetIndex( 0 ) );
+            $sheet = $spreadsheet->getActiveSheet();
+            //Titulo
+            $sheet->setCellValue( 'A1', 'DOFA: hoja de trabajo' );
+            $spreadsheet->getActiveSheet()->getStyle( 'A1:R50' )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER );
+            //Celdas espacios
+            $spreadsheet->getActiveSheet()->getColumnDimension( 'A' )->setWidth( 5, 'pt' );
+            $spreadsheet->getActiveSheet()->getColumnDimension( 'B' )->setWidth( 55, 'pt' );
+            $spreadsheet->getActiveSheet()->getColumnDimension( 'C' )->setWidth( 5, 'pt' );
+            $spreadsheet->getActiveSheet()->getColumnDimension( 'D' )->setWidth( 55, 'pt' );
+            $spreadsheet->getActiveSheet()->getColumnDimension( 'E' )->setWidth( 5, 'pt' );
+            $spreadsheet->getActiveSheet()->getColumnDimension( 'F' )->setWidth( 55, 'pt' );
+            //Titulo #1
+            $sheet->setCellValue( 'C5', 'O' );
+            $sheet->setCellValue( 'D5', 'Oportunidades' );
+            $sheet->setCellValue( 'E5', 'A' );
+            $sheet->setCellValue( 'F5', 'Amenazas' );
+            $spreadsheet->getActiveSheet()->getStyle( "C5:F5" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "C5:F5" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->getStyle( 'C5:F5' )->getAlignment()->setHorizontal( 'center' );
+            //Cuerpo #1
+            $dato1 = $resultados[1];
+            $fila1 = 6;
+            $a = 1;
+            for ( $i = 0; $i < count( $dato1 );
+            $i++ ) {
+                $datos = $dato1[$i];
+                $sheet->setCellValue( "C{$fila1}", "{$a}" );
+                $sheet->setCellValue( "D{$fila1}", "{$datos[0]}" );
+                $sheet->setCellValue( "E{$fila1}", "{$a}" );
+                $sheet->setCellValue( "F{$fila1}", "{$datos[1]}" );
+                $spreadsheet->getActiveSheet()->getStyle( "C{$fila1}:F{$fila1}" )->applyFromArray( $styleArray );
+                $fila1++;
+                $a++;
+            }
+            //Titulo #2
+            $sheet->setCellValue( "A{$fila1}", "F" );
+            $sheet->setCellValue( "B{$fila1}", "Fortalezas" );
+            $sheet->setCellValue( "C{$fila1}", "FO" );
+            $sheet->setCellValue( "D{$fila1}", "Estrategias FO ( Ataque )" );
+            $sheet->setCellValue( "E{$fila1}", "FA" );
+            $sheet->setCellValue( "F{$fila1}", "Estrategias FA ( Defensivas )" );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$fila1}:F{$fila1}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( "00000" );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$fila1}:F{$fila1}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$fila1}:F{$fila1}" )->getAlignment()->setHorizontal( 'center' );
+            //Cuerpo #2
+            $dato2 = $resultados[2];
+            $fila2 = ( $fila1 + 1 );
+            $a = 1;
+            for ( $i = 0; $i < count( $dato2 );
+            $i++ ) {
+                $datos = $dato2[$i];
+                $sheet->setCellValue( "A{$fila2}", "{$a}" );
+                $sheet->setCellValue( "B{$fila2}", "{$datos[0]}" );
+                $sheet->setCellValue( "C{$fila2}", "{$a}" );
+                $sheet->setCellValue( "D{$fila2}", "{$datos[1]}" );
+                $sheet->setCellValue( "E{$fila2}", "{$a}" );
+                $sheet->setCellValue( "F{$fila2}", "{$datos[2]}" );
+                $spreadsheet->getActiveSheet()->getStyle( "A{$fila2}:F{$fila2}" )->applyFromArray( $styleArray );
+                $fila2++;
+                $a++;
+            }
+            //Titulo #3
+            $sheet->setCellValue( "A{$fila2}", "D" );
+            $sheet->setCellValue( "B{$fila2}", "Debilidades" );
+            $sheet->setCellValue( "C{$fila2}", "DO" );
+            $sheet->setCellValue( "D{$fila2}", "Estrategias DO ( Refuerzo ó mejora )" );
+            $sheet->setCellValue( "E{$fila2}", "DA" );
+            $sheet->setCellValue( "F{$fila2}", "Estrategias DA ( Mejora/ ó retirata )" );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$fila2}:F{$fila2}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( "00000" );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$fila2}:F{$fila2}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->getStyle( "A{$fila2}:F{$fila2}" )->getAlignment()->setHorizontal( 'center' );
+            //Cuerpo #3
+            $dato3 = $resultados[3];
+            $fila3 = ( $fila2 + 1 );
+            $a = 1;
+            for ( $i = 0; $i < count( $dato3 );
+            $i++ ) {
+                $datos = $dato3[$i];
+                $sheet->setCellValue( "A{$fila3}", "{$a}" );
+                $sheet->setCellValue( "B{$fila3}", "{$datos[0]}" );
+                $sheet->setCellValue( "C{$fila3}", "{$a}" );
+                $sheet->setCellValue( "D{$fila3}", "{$datos[1]}" );
+                $sheet->setCellValue( "E{$fila3}", "{$a}" );
+                $sheet->setCellValue( "F{$fila3}", "{$datos[2]}" );
+                $spreadsheet->getActiveSheet()->getStyle( "A{$fila3}:F{$fila3}" )->applyFromArray( $styleArray );
+                $fila3++;
+                $a++;
+            }
+            $writer = new Xlsx( $spreadsheet );
+            ob_start();
+            $writer->save( 'php://output' );
+            $contenido = ob_get_clean();
+            $excelBase64 = base64_encode( $contenido );
+            $excel = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' . $excelBase64;
+            $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se generó correctamente', 'reporte' => $excel, 'nombre' => $razon_social, 'tipo' => 'DOFA', 'ext' => '.xlsx'] );
         } catch ( ValidacionExcepcion $error ) {
             $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
         }

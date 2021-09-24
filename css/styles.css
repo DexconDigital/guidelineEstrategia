@@ -163,12 +163,17 @@ input[type=number] {
 }
 
 /* Modal FullScreen */
+.modal.modal-fullscreen {
+     padding-left: 0 !important;
+     padding-right: 0 !important;
+}
+
 .modal.modal-fullscreen .modal-dialog {
-    width: 100vw;
+    width: 100%;
     height: auto;
     margin: 0;
     padding: 0;
-    max-width: none;
+    max-width: 100%;
 }
 
 .modal.modal-fullscreen .modal-content {
@@ -321,6 +326,10 @@ body.swal2-shown {
 
 .mxw-23 {
     max-width: 23%;
+}
+
+.h-cal {
+    height: calc(1.5em + 8.5rem + 29px);
 }
 
 @media (max-width: 1199.98px) {
