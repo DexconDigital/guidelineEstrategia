@@ -70,6 +70,17 @@ class GestionUsuarioControlador extends GenericoControlador {
                 }
                 $datos->axiologica = $generalArray;
             }
+            if ( $datos->procesos != "" ) {
+                $procesos = explode( "|", $datos->procesos );
+                $generalArray = [];
+                for ( $i = 0; $i < count( $procesos );
+                $i++ ) {
+                    $proceso = $procesos[$i];
+                    $proceso_datos = explode( "•", $proceso );
+                    $generalArray[$proceso_datos[0]][$proceso_datos[1]][$proceso_datos[2]] = $proceso_datos[3];
+                }
+                $datos->procesos = $generalArray;
+            }
             $datos->usuario = $_SESSION['usuario_planfuturo'][1];
             $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se consultó correctamente', 'datos' => $datos] );
         } catch ( ValidacionExcepcion $error ) {
@@ -169,7 +180,19 @@ class GestionUsuarioControlador extends GenericoControlador {
             $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
         }
     }
-
+    
+    public function agregar_procesos() {
+        try {
+            Validacion::validar( ['general' => 'obligatorio'], $_POST );
+            $id_empresa = $_POST['id_empresa'];
+            $general = $_POST['general'];
+            $this->usuarioDAO->agregar_procesos( $id_empresa, $general );
+            $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se grabó correctamente' ] );
+        } catch ( ValidacionExcepcion $error ) {
+            $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
+        }
+    }
+    
     public function consultar_dignostico() {
         try {
             Validacion::validar( ['id_empresa' => 'obligatorio'], $_POST );
@@ -1151,20 +1174,27 @@ class GestionUsuarioControlador extends GenericoControlador {
             //Cabecera de la tabla
             $tablas = "<tbody>
                             <tr>
-                                <td colspan='6' style='width:1050px;'></td>
+                                <td colspan='7' style='width:1050px;'></td>
                                 <td colspan='3' style='width:550px;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Meta</td>
+                                <td colspan='5' style='width:1050px;'></td>
                                 <td colspan='13' style='width:1050px;background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Año {$anio}</td>
                             </tr>
                             <tr>
                                 <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Direccionamiento estratégico</td>
                                 <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Directriz de política</td>
                                 <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Objetivo de gestión</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Que hacer para cumplirlo</td>
                                 <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Proceso</td>
                                 <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Indicador</td>
                                 <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Fórmula</td>
                                 <td style='background-color: #86F200;border:0.5px solid #858796;text-align:center'>Sobresaliente</td>
                                 <td style='background-color: #fdd300;border:0.5px solid #858796;text-align:center'>Normal (Meta)</td>
-                                <td style='background-color: #C00000; color: white;border:0.5px solid #858796;text-align:center'>Deficiente</td>";
+                                <td style='background-color: #C00000; color: white;border:0.5px solid #858796;text-align:center'>Deficiente</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Positivo si</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Frecuencia</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Tipo de indicador</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Fuente de los datos</td>
+                                <td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>Responsable</td>";
             for ( $i = 0; $i < 13; $i++ ) {
                 $tablas .= "<td style='background-color: black; color: white;border:0.5px solid #858796;text-align:center'>{$meses[$i]}</td>";
             }
@@ -1188,8 +1218,8 @@ class GestionUsuarioControlador extends GenericoControlador {
                     }
                     $tablas .= "</table></td>";
                 }
-                //Campo 2 al 6
-                if ( $i >= 2 && $i <= 6 ) {
+                //Campo 2 al 7
+                if ( $i >= 2 && $i <= 7 ) {
                     $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
                     for ( $a = 0; $a < count( $campos );
                     $a++ ) {
@@ -1200,8 +1230,8 @@ class GestionUsuarioControlador extends GenericoControlador {
                     }
                     $tablas .= "</table></td>";
                 }
-                //Campo 7
-                if ( $i == 7 ) {
+                //Campo 8
+                if ( $i == 8 ) {
                     for ( $c = 0; $c < 3; $c++ ) {
                         $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
                         for ( $a = 0; $a < count( $campos );
@@ -1229,8 +1259,20 @@ class GestionUsuarioControlador extends GenericoControlador {
                         $tablas .= "</table></td>";
                     }
                 }
-                //Campo 8 al 12
-                if ( $i >= 8 ) {
+                //Campo 9 al 13
+                if ( $i >= 9 && $i <= 13 ) {
+                    $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
+                    for ( $a = 0; $a < count( $campos );
+                    $a++ ) {
+                        $dato = ( $campos[$a] != "" ) ? $campos[$a] : "-";
+                        $tablas .= "<tr>
+                                        <td style='border:0.5px solid #858796;'>{$dato}</td>
+                                    </tr>";
+                    }
+                    $tablas .= "</table></td>";
+                }
+                //Campo >13
+                if ( $i > 13 ) {
                     for ( $c = 0; $c < 12; $c++ ) {
                         $tablas .= "<td style='vertical-align: top;'><table style='width:100%;'>";
                         for ( $a = 0; $a < count( $campos );
@@ -1257,8 +1299,7 @@ class GestionUsuarioControlador extends GenericoControlador {
             $tablas .= "</table></td>";
             $tablas .= "</tr>";
             //Pie con resultados
-            $tablas .= "<tr>
-                            <td colspan='9'></td>";
+            $tablas .= "<tr><td colspan='15'></td>";
             $res = explode( "|", $resultado );
             for ( $i = 0; $i < 13; $i++ ) {
                 $color = "#C00000";
@@ -1289,7 +1330,7 @@ class GestionUsuarioControlador extends GenericoControlador {
             }
             $tablas .= "</tr>
                         <tr>
-                            <td colspan='19'></td>
+                            <td colspan='25'></td>
                             <td colspan='3' style='background-color:{$color_total};color:{$texto_total};border:0.5px solid #858796;text-align:center'>{$total}%</td>
                         </tr>
                     </tbody>>";
@@ -1338,24 +1379,27 @@ class GestionUsuarioControlador extends GenericoControlador {
             $spreadsheet->getActiveSheet()->mergeCells( "A1:R3" );
             $spreadsheet->getActiveSheet()->getStyle( 'A1:H50' )->getAlignment()->setWrapText( true );
             //Estilo de la parte 1
-            $spreadsheet->getActiveSheet()->getStyle( "H5:W5" )->getFont()->setBold( true );
-            $spreadsheet->getActiveSheet()->getStyle( 'H5:W5' )->getAlignment()->setHorizontal( 'center' );
-            $spreadsheet->getActiveSheet()->getStyle( "H5:W5" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
-            $spreadsheet->getActiveSheet()->getStyle( "H5:W5" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->getStyle( "I5:AC5" )->getFont()->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( 'I5:AC5' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "I5:AC5" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "I5:AC5" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
             //Estilo de la parte 2
-            $spreadsheet->getActiveSheet()->getStyle( "A6:W6" )->getFont()->setBold( true );
-            $spreadsheet->getActiveSheet()->getStyle( 'A6:W6' )->getAlignment()->setHorizontal( 'center' );
-            $spreadsheet->getActiveSheet()->getStyle( "A6:W6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
-            $spreadsheet->getActiveSheet()->getStyle( "A6:W6" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->getStyle( "A6:AC6" )->getFont()->setBold( true );
+            $spreadsheet->getActiveSheet()->getStyle( 'A6:AC6' )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "A6:AC6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '00000' );
+            $spreadsheet->getActiveSheet()->getStyle( "A6:AC6" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
             //Celdas espacios
             $spreadsheet->getActiveSheet()->getColumnDimension( 'A' )->setWidth( 50, 'pt' );
             $spreadsheet->getActiveSheet()->getColumnDimension( 'b' )->setWidth( 50, 'pt' );
-            for ( $i = "C"; $i <= "J"; $i++ ) {
+            for ( $i = "C"; $i <= "P"; $i++ ) {
                 $spreadsheet->getActiveSheet()->getColumnDimension( "{$i}" )->setAutoSize( true );
+                
             }
             //Celdas meses
-            for ( $i = "K"; $i <= "W"; $i++ ) {
-                $spreadsheet->getActiveSheet()->getColumnDimension( "{$i}" )->setWidth( 20, 'pt' );
+            $x = "P";
+            for ( $i = 0; $i <= 13; $i++ ) {
+                $spreadsheet->getActiveSheet()->getColumnDimension( "{$x}" )->setWidth( 20, 'pt' );
+                $x++;
             }
             //Logo dexcon
             $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
@@ -1369,11 +1413,11 @@ class GestionUsuarioControlador extends GenericoControlador {
             $sheet->setCellValue( 'A1', "Tablero de indicadores {$anio}" );
             $spreadsheet->getActiveSheet()->getStyle( 'A1:W50' )->getAlignment()->setVertical( \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER );
             //Cabecera parte 1
-            $sheet->setCellValue( 'H5', 'Meta' );
-            $spreadsheet->getActiveSheet()->mergeCells( "H5:J5" );
+            $sheet->setCellValue( 'I5', 'Meta' );
+            $spreadsheet->getActiveSheet()->mergeCells( "I5:K5" );
             //Cabecera parte 1.1
-            $sheet->setCellValue( 'K5', "Año {$anio}" );
-            $spreadsheet->getActiveSheet()->mergeCells( "K5:W5" );
+            $sheet->setCellValue( 'Q5', "Año {$anio}" );
+            $spreadsheet->getActiveSheet()->mergeCells( "Q5:AC5" );
             //Cabecera parte 2
             $sheet->setCellValue( 'A6', 'Direccionamiento estratégico' );
             $spreadsheet->getActiveSheet()->mergeCells( "A6:B6" );
@@ -1382,22 +1426,34 @@ class GestionUsuarioControlador extends GenericoControlador {
             //Cabecera parte 2.2
             $sheet->setCellValue( 'D6', 'Objetivo de gestión' );
             //Cabecera parte 2.3
-            $sheet->setCellValue( 'E6', 'Proceso' );
+            $sheet->setCellValue( 'E6', 'Que hacer para cumplirlo' );
             //Cabecera parte 2.4
-            $sheet->setCellValue( 'F6', 'Indicador' );
+            $sheet->setCellValue( 'F6', 'Proceso' );
             //Cabecera parte 2.5
-            $sheet->setCellValue( 'G6', 'Fórmula' );
+            $sheet->setCellValue( 'G6', 'Indicador' );
             //Cabecera parte 2.6
-            $sheet->setCellValue( 'H6', 'Sobresaliente' );
-            $spreadsheet->getActiveSheet()->getStyle( "H6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '86F200' );
-            $spreadsheet->getActiveSheet()->getStyle( "H6" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
-            $sheet->setCellValue( 'I6', 'Normal (Meta)' );
-            $spreadsheet->getActiveSheet()->getStyle( "I6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'fdd300' );
+            $sheet->setCellValue( 'H6', 'Fórmula' );
+            //Cabecera parte 2.7
+            $sheet->setCellValue( 'I6', 'Sobresaliente' );
+            $spreadsheet->getActiveSheet()->getStyle( "I6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( '86F200' );
             $spreadsheet->getActiveSheet()->getStyle( "I6" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
-            $sheet->setCellValue( 'J6', 'Deficiente' );
-            $spreadsheet->getActiveSheet()->getStyle( "J6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'C00000' );
-            //Cabecera parte 2.7 meses
-            $mes = "K";
+            $sheet->setCellValue( 'J6', 'Normal (Meta)' );
+            $spreadsheet->getActiveSheet()->getStyle( "J6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'fdd300' );
+            $spreadsheet->getActiveSheet()->getStyle( "J6" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+            $sheet->setCellValue( 'K6', 'Deficiente' );
+            $spreadsheet->getActiveSheet()->getStyle( "K6" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( 'C00000' );
+            //Cabecera parte 2.8
+            $sheet->setCellValue( 'L6', 'Positivo si' );
+            //Cabecera parte 2.9
+            $sheet->setCellValue( 'M6', 'Frecuencia' );
+            //Cabecera parte 2.10
+            $sheet->setCellValue( 'N6', 'Tipo de indicador' );
+            //Cabecera parte 2.11
+            $sheet->setCellValue( 'O6', 'Fuente de los datos' );
+            //Cabecera parte 2.12
+            $sheet->setCellValue( 'P6', 'Responsable' );
+            //Cabecera parte 2.13 meses
+            $mes = "Q";
             for ( $i = 0; $i < 13; $i++ ) {
                 $sheet->setCellValue( "{$mes}6", "{$meses[$i]}" );
                 $mes++;
@@ -1406,8 +1462,8 @@ class GestionUsuarioControlador extends GenericoControlador {
             $data = $datos_anios[1];
             $campo = 7;
             $letraC = "C";
-            $letraH = "H";
-            $letraK = "K";
+            $letraH = "I";
+            $letraK = "Q";
             for ( $i = 1; $i <= count( $data );
             $i++ ) {
                 $campos = $data[$i];
@@ -1425,8 +1481,8 @@ class GestionUsuarioControlador extends GenericoControlador {
 
                     }
                 }
-                //Campo 2 al 6
-                if ( $i >= 2 && $i <= 6 ) {
+                //Campo 2 al 7
+                if ( $i >= 2 && $i <= 7 ) {
                     $cmp = 7;
                     for ( $a = 0; $a < count( $campos );
                     $a++ ) {
@@ -1437,8 +1493,8 @@ class GestionUsuarioControlador extends GenericoControlador {
                     }
                     $letraC++;
                 }
-                //Campo 7
-                if ( $i == 7 ) {
+                //Campo 8
+                if ( $i == 8 ) {
                     for ( $c = 0; $c < 3; $c++ ) {
                         $cmp = 7;
                         for ( $a = 0; $a < count( $campos );
@@ -1467,8 +1523,20 @@ class GestionUsuarioControlador extends GenericoControlador {
                         $letraH++;
                     }
                 }
-                //Campo 8 al 12
-                if ( $i >= 8 ) {
+                //Campo 9 al 13
+                if ( $i >= 9 && $i <= 13 ) { 
+                    $cmp = 7;
+                    for ( $a = 0; $a < count( $campos );
+                    $a++ ) {
+                        $dato = $campos[$a];
+                        $sheet->setCellValue( "{$letraH}{$cmp}", "{$dato}" );
+                        $spreadsheet->getActiveSheet()->getStyle( "{$letraH}{$cmp}" )->applyFromArray( $styleArray );
+                        $cmp++;
+                    }
+                    $letraH++;
+                } 
+                //Campo > 13
+                if ( $i > 13 ) {
                     for ( $c = 0; $c < 12; $c++ ) {
                         $cmp = 7;
                         for ( $a = 0; $a < count( $campos );
@@ -1486,13 +1554,13 @@ class GestionUsuarioControlador extends GenericoControlador {
             }
             //Promedios
             $cmp = 7;
-            $letraK = "K";
+            $letraK = "Q";
             $prom = explode( "|", $promedio );
             for ( $a = 0; $a < count( $prom );
             $a++ ) {
-                $sheet->setCellValue( "W{$cmp}", "{$prom[$a]}" );
-                $spreadsheet->getActiveSheet()->getStyle( "W{$cmp}" )->getAlignment()->setHorizontal( 'center' );
-                $spreadsheet->getActiveSheet()->getStyle( "W{$cmp}" )->applyFromArray( $styleArray );
+                $sheet->setCellValue( "AC{$cmp}", "{$prom[$a]}" );
+                $spreadsheet->getActiveSheet()->getStyle( "AC{$cmp}" )->getAlignment()->setHorizontal( 'center' );
+                $spreadsheet->getActiveSheet()->getStyle( "AC{$cmp}" )->applyFromArray( $styleArray );
                 $cmp++;
             }
             //Resultados
@@ -1519,20 +1587,20 @@ class GestionUsuarioControlador extends GenericoControlador {
             $total = floatval( $res[13] );
             $cmp_total = ( $cmp + 1 );
             $color_total = "C00000";
-            $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
+            $spreadsheet->getActiveSheet()->getStyle( "AA{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE );
             if ( $total >= 33 ) {
                 $color_total = "fdd300";
-                $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+                $spreadsheet->getActiveSheet()->getStyle( "AA{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
             }
             if ( $total >= 67 ) {
                 $color_total = "86F200";
-                $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
+                $spreadsheet->getActiveSheet()->getStyle( "AA{$cmp_total}" )->getFont()->getColor()->setARGB( \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK );
             }
-            $sheet->setCellValue( "U{$cmp_total}", "{$total}%" );
-            $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getAlignment()->setHorizontal( 'center' );
-            $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( "{$color_total}" );
-            $spreadsheet->getActiveSheet()->mergeCells( "U{$cmp_total}:W{$cmp_total}" );
-            $spreadsheet->getActiveSheet()->getStyle( "U{$cmp_total}:W{$cmp_total}" )->applyFromArray( $styleArray );
+            $sheet->setCellValue( "AA{$cmp_total}", "{$total}%" );
+            $spreadsheet->getActiveSheet()->getStyle( "AA{$cmp_total}" )->getAlignment()->setHorizontal( 'center' );
+            $spreadsheet->getActiveSheet()->getStyle( "AA{$cmp_total}" )->getFill()->setFillType( \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID )->getStartColor()->setARGB( "{$color_total}" );
+            $spreadsheet->getActiveSheet()->mergeCells( "AA{$cmp_total}:AC{$cmp_total}" );
+            $spreadsheet->getActiveSheet()->getStyle( "AA{$cmp_total}:AC{$cmp_total}" )->applyFromArray( $styleArray );
             //Armar reporte
             $writer = new Xlsx( $spreadsheet );
             ob_start();

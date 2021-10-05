@@ -18,6 +18,7 @@ var gestionUsuario = {
         $('#btn_principios').on('click', gestionUsuario.agregar_principios);
         $('#btn_mision').on('click', gestionUsuario.agregar_mision);
         $('#btn_vision').on('click', gestionUsuario.agregar_vision);
+        $('.grabarprocesos').on('click', gestionUsuario.agregar_procesos);
         $('#btn_dofa').on('click', gestionUsuario.agregar_Dofaresumido);
         $('.grabar_dofaana').on('click', gestionUsuario.agregar_Dofaanalisis);
         $('.estrategias').on('click', gestionUsuario.consultarEstrategias);
@@ -79,6 +80,8 @@ var gestionUsuario = {
         gestionUsuario.datosreferencia(datos);
         //cargar principios
         gestionUsuario.datosprincipios(datos);
+        //cargar procesos
+        gestionUsuario.datosprocesos(datos);
         //color de la empresa 
         gestionUsuario.coloresGeneral(datos);
     },
@@ -188,7 +191,6 @@ var gestionUsuario = {
         $('#color').val(datos.color);
         $('#vision_text').val(datos.vision);
         $('#mision_text').val(datos.mision);
-
         $('.yearpicker').change(function (e) {
             e.stopImmediatePropagation();
             var horizonte_inicial = $('#horizonte_inicial').val();
@@ -330,7 +332,6 @@ var gestionUsuario = {
             var tr = gestionUsuario.camposprincipios(valor);
             cuerpo_principios.append(tr);
         }
-
         //añadir nuevos principios
         $('.agregarprincipios').on('click', function (e) {
             e.stopImmediatePropagation();
@@ -338,7 +339,6 @@ var gestionUsuario = {
             var tr = gestionUsuario.camposprincipios(valor);
             cuerpo_principios.append(tr);
         });
-
         //remover principios
         cuerpo_principios.on('click', '.remove', function () {
             $(this).parent().parent().remove();
@@ -409,7 +409,6 @@ var gestionUsuario = {
         var estra = dat.split("&pos=").join("|");
         var estra_espacio = estra.replace(/%7C/g, '');
         var estrategas = estra_espacio.replace("pos=", "");
-
         if (horizonte_inicial > horizonte_final) {
             $('.msg1').html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Advertencia</strong> El horizonte inicial no debe ser mayor al horizonte final.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
         } else {
@@ -427,6 +426,48 @@ var gestionUsuario = {
             data.append('estrategas', decodeURIComponent(estrategas));
             app.ajaximg('../controlador/GestionUsuarioControlador.php?opcion=modificar_empresa', data, gestionUsuario.respuestaEmpresaimg);
         }
+    },
+    datosprocesos: function (datos) {
+        var procesos_general = datos.procesos;
+        for (var i = 1; i <= 3; i++) {
+            var cuerpo_procesos = $('.listaproceso' + i + ' tbody');
+            //cargar procesos
+            if (procesos_general != null && procesos_general != "") {
+                cuerpo_procesos.empty();
+                var proceso_dato = procesos_general[i];
+                for (var pos = 0; pos < proceso_dato.length; pos++) {
+                    var valor = proceso_dato[pos];
+                    var tr = gestionUsuario.camposprocesos(valor);
+                    cuerpo_procesos.append(tr);
+                }
+            } else {
+                cuerpo_procesos.empty();
+                var valor = ["", ""];
+                var tr = gestionUsuario.camposprocesos(valor);
+                cuerpo_procesos.append(tr);
+            }
+            //remover procesos
+            cuerpo_procesos.on('click', '.remove', function () {
+                $(this).parent().parent().remove();
+            });
+        }
+        //añadir nuevos procesos
+        $('.agregarprocesos').on('click', function (e) {
+            e.stopImmediatePropagation();
+            var valor = ["", ""];
+            var idx = $(this).attr("data-index");
+            var tr = gestionUsuario.camposprocesos(valor);
+            $(".listaproceso" + idx).append(tr);
+        });
+
+    },
+    camposprocesos: function (campo) {
+        var tr = '<tr>' +
+            '<td class="align-middle"><input class="form-control form-control-sm general" value="' + campo[0] + '" /></td>' +
+            '<td class="align-middle"><input class="form-control form-control-sm general" value="' + campo[1] + '" /></td>' +
+            '<td class="text-center w-1"><a href="#" class="text-danger remove"><i class="fa fa-trash"></i></a>' +
+            '</tr>';
+        return tr;
     },
     agregar_axiologicas: function (e) {
         e.preventDefault();
@@ -498,6 +539,35 @@ var gestionUsuario = {
             'id_empresa': usuarioModelo.listaUsuario.id_empresa
         }
         app.ajax('../controlador/GestionUsuarioControlador.php?opcion=agregar_vision', data, gestionUsuario.respuestaGeneral);
+    },
+    agregar_procesos: function (e) {
+        var total_tablas = $(".procesogeneral").length;
+        var cadena = "";
+        var estado = 0;
+        for (var datc = 1; datc <= total_tablas; datc++) {
+            var campos = $('.listaproceso' + datc + ' tbody > tr');
+            var contador = campos.length;
+            estado += (contador == 0) ? 1 : 0;
+            campos.each(function (tr_idx, tr) {
+                $(tr).children('td').children('.general').each(function (td_idx, td) {
+                    var val = $(td).val();
+                    var valor = val.split("|").join("");
+                    var valor_general = valor.split("•").join("");
+                    cadena += datc + "•" + tr_idx + "•" + td_idx + "•" + valor_general + "|";
+                });
+            });
+        }
+        if (estado >= 1) {
+            var mensaje = "No debe dejar tablas/campos vacios.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
+        } else {
+            var general = cadena.slice(0, -1);
+            var data = {
+                'general': general,
+                'id_empresa': usuarioModelo.listaUsuario.id_empresa
+            }
+            app.ajax('../controlador/GestionUsuarioControlador.php?opcion=agregar_procesos', data, gestionUsuario.respuestaGeneral);
+        }
     },
     consultadatosDiagnostico: function (e) {
         var data = {
@@ -646,12 +716,12 @@ var gestionUsuario = {
         var arry_deb = [];
         //Validar si está vacio y traer las calificaciones más relevantes (4, 6 y 9) del PCI y POAM
         if (analisis_general == null || analisis_general == "") {
-            $('.diag_general .data_mayor').each(function (index, tr) { 
+            $('.diag_general .data_mayor').each(function (index, tr) {
                 var mayor_val = $(this).data("val");
                 var mayor_tipo = $(this).data("tipo");
                 var valor = $(this).find("input.general").val();
-                ( mayor_tipo == "fortaleza" ) ? arry_for.push(valor) : "";
-                ( mayor_tipo == "debilidad" ) ? arry_deb.push(valor) : "";
+                (mayor_tipo == "fortaleza") ? arry_for.push(valor): "";
+                (mayor_tipo == "debilidad") ? arry_deb.push(valor): "";
 
             });
         }
@@ -670,17 +740,17 @@ var gestionUsuario = {
                 }
             } else {
                 tabla_analisis.empty();
-                if(datac == 1) {
+                if (datac == 1) {
                     var count = (arry_for.length > arry_deb.length) ? arry_for.length : arry_deb.length;
                     for (var i = 0; i < count; i++) {
-                        var dato1 = (arry_for[i] != undefined) ?  arry_for[i] : "";
-                        var dato2 = (arry_deb[i] != undefined) ?  arry_deb[i] : "";
+                        var dato1 = (arry_for[i] != undefined) ? arry_for[i] : "";
+                        var dato2 = (arry_deb[i] != undefined) ? arry_deb[i] : "";
                         var tr = gestionUsuario.campotabla1DofaAnalisis(dato1, dato2);
                         tabla_analisis.append(tr);
                     }
                 }
                 //Fortalezas
-                if(datac == 2) { 
+                if (datac == 2) {
                     var count = arry_for.length
                     for (var i = 0; i < count; i++) {
                         var datos = [arry_for[i], "", ""];
@@ -689,7 +759,7 @@ var gestionUsuario = {
                     }
                 }
                 //Debilidades
-                if(datac == 3) { 
+                if (datac == 3) {
                     var count = arry_deb.length
                     for (var i = 0; i < count; i++) {
                         var datos = [arry_deb[i], "", ""];
@@ -752,7 +822,7 @@ var gestionUsuario = {
             '<td class="w-1 data-fila"></td>' +
             '<td>' +
             '<input class="form-control form-control-sm data general" value="' + dato2 + '" /></td>' +
-            '</tr>';  
+            '</tr>';
         return tr;
     },
     campostablaDofaAnalisis: function (datos, cantidad) {
@@ -808,9 +878,9 @@ var gestionUsuario = {
             tr += '<td class="align-middle ' + color + '">' +
                 '<select class="form-control text-center form-control-sm data general fortaleza val-' + fortaleza + ' mb-0" data-pos="' + fortaleza + '" required>' +
                 '<option value="0" class="bg-white"></option>' +
-                '<option value="1" class="bg-red text-light" ' + selected1 + '>Bajo</option>' +
-                '<option value="2" class="bg-amarillo text-negro" ' + selected2 + '>Medio</option>' +
-                '<option value="3" class="bg-verde text-negro" ' + selected3 + '>Alto</option>' +
+                '<option value="1" class="bg-white text-negro" ' + selected1 + '>Bajo</option>' +
+                '<option value="2" class="bg-white text-negro" ' + selected2 + '>Medio</option>' +
+                '<option value="3" class="bg-white text-negro" ' + selected3 + '>Alto</option>' +
                 '</select>' +
                 '</td>';
         }
@@ -836,9 +906,9 @@ var gestionUsuario = {
             tr += '<td class="align-middle ' + color + '">' +
                 '<select class="form-control text-center form-control-sm data general debilidad val-' + debilidad + ' mb-0" data-pos="' + debilidad + '">' +
                 '<option value="0" class="bg-white"></option>' +
-                '<option value="1" class="bg-red text-light" ' + selected1 + '>Bajo</option>' +
-                '<option value="2" class="bg-amarillo text-negro" ' + selected2 + '>Medio</option>' +
-                '<option value="3" class="bg-verde text-negro" ' + selected3 + '>Alto</option>' +
+                '<option value="1" class="bg-white text-negro" ' + selected1 + '>Bajo</option>' +
+                '<option value="2" class="bg-white text-negro" ' + selected2 + '>Medio</option>' +
+                '<option value="3" class="bg-white text-negro" ' + selected3 + '>Alto</option>' +
                 '</select>' +
                 '</td>';
         }
@@ -899,7 +969,7 @@ var gestionUsuario = {
             $(this).find('td.data-fortaleza').html(sum_fortaleza);
             $(this).find('td.data-debilidad').html(sum_debilidad);
             //Remover clase data_mayor
-            $(this).attr("Class","").attr("data-tipo","").attr("data-val","");
+            $(this).attr("Class", "").attr("data-tipo", "").attr("data-val", "");
             //Validar resultados más relevantes (4, 6 y 9) del PCI y POAM
             if (sum_fortaleza >= 4) {
                 $(this).addClass("data_mayor").attr("data-tipo", "fortaleza").attr("data-val", sum_fortaleza);
@@ -981,9 +1051,9 @@ var gestionUsuario = {
             });
         }
         if (estado >= 1) {
-            alerta.html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Advertencia</strong> No debe dejar tablas/campos vacios.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            var mensaje = "No debe dejar tablas/campos vacios.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
         } else {
-            alerta.html("");
             var datos = cadena.slice(0, -1);
             var data = {
                 'general': datos,
@@ -1018,7 +1088,8 @@ var gestionUsuario = {
             });
         }
         if (estado >= 1) {
-            $(".alerta").html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Advertencia</strong> No debe dejar tablas vacias.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            var mensaje = "No debe dejar tablas vacias.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
         } else {
             var campos = cadena.slice(0, -1);
             var data = {
@@ -1060,7 +1131,7 @@ var gestionUsuario = {
             }
         } else {
             tabla_seguimientos.empty();
-            var seg = ["", "", "", "", "", ""];
+            var seg = ["", "", "", "", "", "", "", "", ""];
             var tr = gestionUsuario.campostablaSeguimientos(seg);
             tabla_seguimientos.append(tr);
         }
@@ -1075,7 +1146,7 @@ var gestionUsuario = {
         $('.agregarseguiomiento').on('click', function (e) {
             e.stopImmediatePropagation();
             var idx = $(this).attr("data-index");
-            var seg = ["", "", "", "", "", ""];
+            var seg = ["", "", "", "", "", "", "", "", ""];
             var tr = gestionUsuario.campostablaSeguimientos(seg);
             tabla_seguimientos.append(tr);
             gestionUsuario.imprimirSeguimientos();
@@ -1086,8 +1157,10 @@ var gestionUsuario = {
             '<td class="align-middle"><a href="#" class="text-danger remove"><i class="fa fa-trash"></i></a></td>' +
             '<td class="align-middle"><input class="form-control form-control-sm data general" value="' + campo[0] + '" /></td>' +
             '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0" value="' + campo[1] + '" /></td>' +
-            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0" value="' + campo[2] + '" /></td>';
-        for (var i = 3; i <= 5; i++) {
+            '<td class="align-middle"><input type="number" class="form-control form-control-sm data general mb-0 dias" min="1" max="90" value="' + campo[2] + '" /></td>' +
+            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0 data-seg" value="' + campo[3] + '" /></td>' +
+            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0 real" value="' + campo[4] + '" readonly/></td>';
+        for (var i = 5; i <= 7; i++) {
             var selected = (campo[i] == "1") ? "selected" : "";
             tr += '<td class="align-middle">' +
                 '<select class="form-control text-center form-control-sm data general mb-0">' +
@@ -1096,7 +1169,9 @@ var gestionUsuario = {
                 '</select>' +
                 '</td>';
         }
-        tr += '<td class="data-fila text-center align-middle"></td>' +
+        tr += 
+            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0" value="' + campo[8] + '" /></td>' +
+            '<td class="data-fila text-center align-middle"></td>' +
             '</tr>';
         return tr;
     },
@@ -1117,6 +1192,10 @@ var gestionUsuario = {
         var pie = $('.listaseguimientos tfoot tr td.totalgeneral');
         var color = "#C63430";
         var text_color = "white";
+        //Restringir dias hasta 90
+        $('.dias').on('mouseup keyup', function () {
+          $(this).val(Math.min(90, Math.max(0, $(this).val())));
+        });
         //Calcular fila
         $('.listaseguimientos tr:has(td):not(:last)').each(function () {
             var sum = 0;
@@ -1137,6 +1216,16 @@ var gestionUsuario = {
                 textogeneral = "black";
             }
             $(this).find('td:last').css("background-color", colorgeneral).css("color", textogeneral).html(totalgeneral + "%");
+            //Fecha de seguimiento real 
+            var dias = parseInt($(this).find('.dias').val()) + 1 || 0; // Número de días a agregar
+            var fecha_seg = new Date($(this).find('.data-seg').val());
+            fecha_seg.setDate(fecha_seg.getDate() + dias);
+            var dia = ("0" + fecha_seg.getDate()).slice(-2);
+            var mes = ("0" + (fecha_seg.getMonth() + 1)).slice(-2);
+            var real = fecha_seg.getFullYear()+"-"+(mes)+"-"+(dia) ;
+            if (fecha_seg != undefined) {
+                $(this).find('.real').val(real);
+            }
         });
         //Total
         $('.listaseguimientos tbody tr').each(function (index, tr) {
@@ -1337,9 +1426,9 @@ var gestionUsuario = {
             });
         }
         if (estado >= 1) {
-            alerta.html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Advertencia</strong> No debe dejar tablas vacias.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            var mensaje = "No debe dejar tablas/campos vacios.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
         } else {
-            alerta.html('');
             var general = cadena.slice(0, -1);
             var data = {
                 'general': general,
@@ -1566,7 +1655,8 @@ var gestionUsuario = {
                 '</div>' +
                 '</div>' +
                 '</div>';
-        } else {
+        } 
+        if (pos == 0) {
             var cmp = '<input class="rounded-0 form-control form-control-sm general shadow-none" value="' + campo + '" />';
         }
         return cmp;
@@ -1596,9 +1686,9 @@ var gestionUsuario = {
             });
         }
         if (estado >= 1) {
-            alerta.html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Advertencia</strong> No debe dejar campos vacios.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            var mensaje = "No debe dejar campos vacios.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
         } else {
-            alerta.html("");
             var general = cadena.slice(0, -1);
             var data = {
                 'general': general,
@@ -1702,9 +1792,9 @@ var gestionUsuario = {
             });
         }
         if (estado >= 1) {
-            alerta.html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Advertencia</strong> No debe dejar campos vacios.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            var mensaje = "No debe dejar campos vacios.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
         } else {
-            alerta.html("");
             var general = cadena.slice(0, -1);
             var data = {
                 'general': general,
@@ -1727,29 +1817,56 @@ var gestionUsuario = {
             }
         } else {
             tabla_objetivos.empty();
-            for (var a = 1; a <= 6; a++) {
-                var datos = ["", "", "", ""];
-                var tr = gestionUsuario.camposObjetivos(datos, a);
-                tabla_objetivos.append(tr);
-            }
+            var datos = ["", "", "", ""];
+            var tr = gestionUsuario.camposObjetivos(datos, a);
+            tabla_objetivos.append(tr);
         }
+        //Posición de la fila
+        gestionUsuario.imprimirObjetivos(tabla_objetivos);
+        //Agregar filas
+        $('.agregarobjetivos').on('click', function (e) {
+            e.stopImmediatePropagation();
+            var valor = ["", "", "", ""];
+            var tr = gestionUsuario.camposObjetivos(valor);
+            tabla_objetivos.append(tr);
+            gestionUsuario.imprimirObjetivos(tabla_objetivos);
+        });
+        //Remover filas
+        tabla_objetivos.on('click', '.remove', function () {
+            $(this).parent().parent().remove();
+            gestionUsuario.imprimirObjetivos(tabla_objetivos);
+        });
     },
     camposObjetivos: function (campo, pos) {
         var tr = '<tr>' +
-            '<td class="w-1 data-fila">O' + pos + 'PH</td>' +
+            '<td class="w-1 align-middle text-center"><a href="#" class="text-danger remove"><i class="fa fa-trash"></i></a></td>' +
+            '<td class="w-1">O<span class="data-fila"></span>PH</td>' +
             '<td class="p-0"><textarea class="form-control mb-0 shadow-none rounded-0 data general">' + campo[0] + '</textarea></td>' +
-            '<td class="w-1 data-fila">O' + pos + 'PP</td>' +
+            '<td class="w-1">O<span class="data-fila"></span>PP</td>' +
             '<td class="p-0"><textarea class="form-control mb-0 shadow-none rounded-0 data general">' + campo[1] + '</textarea></td>' +
-            '<td class="w-1 data-fila">O' + pos + 'PC</td>' +
+            '<td class="w-1">O<span class="data-fila"></span>PC</td>' +
             '<td class="p-0"><textarea class="form-control mb-0 shadow-none rounded-0 data general">' + campo[2] + '</textarea></td>' +
-            '<td class="w-1 data-fila">O' + pos + 'PF</td>' +
+            '<td class="w-1">O<span class="data-fila"></span>PF</td>' +
             '<td class="p-0"><textarea class="form-control mb-0 shadow-none rounded-0 data general">' + campo[3] + '</textarea></td>';
         tr += "</tr>";
         return tr;
     },
+    imprimirObjetivos: function (cuerpo) {
+        cuerpo.calculaObjetivos(cuerpo);
+        cuerpo.change(function () {
+            gestionUsuario.calculaObjetivos(cuerpo);
+        });
+    },
+    imprimirObjetivos: function (cuerpo) {
+        cuerpo.find("tr").each(function (index, tr) {
+            var idx = index + 1;
+            $(this).find('.data-fila').html(idx);
+        });
+    },
     agregar_Objetivos: function (e) {
         var cadena = "";
         var campos = $('.listaobjetivos tbody > tr');
+        var estado = campos.length;
         campos.each(function (tr_idx, tr) {
             $(tr).children('td').children('.general').each(function (td_idx, td) {
                 var val = $(td).val();
@@ -1758,12 +1875,17 @@ var gestionUsuario = {
                 cadena += tr_idx + "•" + td_idx + "•" + valor_general + "|";
             });
         });
-        var campos = cadena.slice(0, -1);
-        var data = {
-            'general': campos,
-            'id_empresa': usuarioModelo.listaUsuario.id_empresa
+        if (estado == 0) {
+            var mensaje = "No debe dejar campos vacios.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
+        } else {
+            var campos = cadena.slice(0, -1);
+            var data = {
+                'general': campos,
+                'id_empresa': usuarioModelo.listaUsuario.id_empresa
+            }
+            app.ajax('../controlador/GestionUsuarioControlador.php?opcion=agregar_objetivos', data, gestionUsuario.respuestaEstrategias);
         }
-        app.ajax('../controlador/GestionUsuarioControlador.php?opcion=agregar_objetivos', data, gestionUsuario.respuestaEstrategias);
     },
     datosIndicadores: function (datos) {
         var anio = $('.anio_tabla');
@@ -1775,44 +1897,33 @@ var gestionUsuario = {
         $(".anio_indicador").html(anio.val());
         var indicador_general = datos.cmi;
         usuarioModelo.listaIndicadores = datos.cmi;
-        var datac = 1;
-        var tabla_none = $('.indicadorestabla' + datac).find(".indicadorvacioespecial0");
-        var tabla_estr = $('.indicadorestabla' + datac).find(".indicadorvacio");
-        var tablaespecial1_estr = $('.indicadorestabla' + datac).find(".indicadorvacioespecial1");
-        var tablaespecial2_estr = $('.indicadorestabla' + datac).find(".indicadorvacioespecial2");
-        var especiales = $([tabla_none[0], tablaespecial1_estr[0], tablaespecial2_estr[0]]);
+        var tabla = $('.indicadorestabla1').find("[data-columna]");
         if (indicador_general != null && indicador_general != "") {
             //Cargar datos
-            gestionUsuario.indicadoresLlenos(tabla_none, tabla_estr, tablaespecial1_estr, tablaespecial2_estr, indicador_general, datac, anio.val());
+            gestionUsuario.indicadoresLlenos(indicador_general, anio.val());
             //Verifica si existe un arreglo con la fecha establecida
             anio.on("change", function (e) {
                 $(".anio_indicador").html($(this).val());
-                gestionUsuario.indicadoresLlenos(tabla_none, tabla_estr, tablaespecial1_estr, tablaespecial2_estr, indicador_general, datac, $(this).val());
+                gestionUsuario.indicadoresLlenos(indicador_general, $(this).val());
             });
         } else {
-            gestionUsuario.indicadoresVacios(tabla_none, tabla_estr, tablaespecial1_estr, tablaespecial2_estr);
+            gestionUsuario.indicadoresVacios();
         }
         //remover 
-        tabla_estr.on('click', '.remove', function () {
-            $(this).parent().parent().parent().remove();
-        });
-        //remover especial 
-        especiales.on('click', '.remove', function () {
-            $(this).parent().parent().parent().parent().parent().remove();
-            gestionUsuario.imprimirIndicadores();
+        tabla.each(function(a){
+            $(this).on('click', '.remove', function () {
+                $(this).parents(".input-group").remove();
+            });
         });
         //Calculos x mes
         gestionUsuario.imprimirIndicadores();
         $('.agregarindicadores').on('click', function (e) {
             e.stopImmediatePropagation();
+            var estr = "";
             var idx = $(this).attr("data-index");
             var tipo = $(this).attr("data-type");
-            var estr = ["", "", "", "", "", "", "", "", "", "", "", "", ""];
-            if (tipo == 1) {
-                var cmp = gestionUsuario.campostablaEstrategia("", tipo);
-            } else {
-                var cmp = gestionUsuario.campoMetasAnios(estr, tipo);
-            }
+            var valores = $(this).parent().parent().attr("data-valores") || 0;
+            var cmp = gestionUsuario.campoMetasAnios(estr, tipo, valores);
             $('.indicadordatos' + idx).append(cmp);
             gestionUsuario.imprimirIndicadores();
         });
@@ -1860,91 +1971,75 @@ var gestionUsuario = {
             }
         });
     },
-    indicadoresVacios: function (tabla_none, tabla_estr, tablaespecial1_estr, tablaespecial2_estr) {
-        tabla_estr.empty();
-        tabla_none.empty();
-        tablaespecial1_estr.empty();
-        tablaespecial2_estr.empty();
-        var estr = ["", "", "", "", "", "", "", "", "", "", "", "", ""];
-        var tr0 = gestionUsuario.campoMetasAnios(estr, "estra");
-        var tr = gestionUsuario.campostablaEstrategia("", 1);
-        var tr_espcial1 = gestionUsuario.campoMetasAnios(estr, "metas");
-        var tr_espcial2 = gestionUsuario.campoMetasAnios(estr, "anios");
-        tabla_none.append(tr0);
-        tabla_estr.append(tr);
-        tablaespecial1_estr.append(tr_espcial1);
-        tablaespecial2_estr.append(tr_espcial2);
+    indicadoresVacios: function (e) {
+        var tabla = $('.indicadorestabla1').find("[data-columna]");
+        tabla.each(function(a){
+            var idx = (a + 1);
+            var tipo = $(this).attr("data-tipo") || 1;
+            var valores = $(this).parent().attr("data-valores") || 0;
+            $(this).empty();
+            var campo = "";
+            var cmp = gestionUsuario.campoMetasAnios(campo, tipo , valores);
+            $(this).append(cmp);
+        });
+        
     },
-    indicadoresLlenos: function (tabla_none, tabla_estr, tablaespecial1_estr, tablaespecial2_estr, indicador_general, datac, anio_cambio) {
-        tabla_estr.empty();
-        tablaespecial1_estr.empty();
-        tablaespecial2_estr.empty();
+    indicadoresLlenos: function (indicador_general, anio_cambio) {
         //Revisar si existe el año en el arreglo
         var estr_dato = indicador_general[anio_cambio];
         if (estr_dato != undefined) {
-            var tabla_dato = estr_dato[datac];
-            //campos 1
-            var estr1 = tabla_dato[1];
-            if (estr1 != undefined) {
-                var tabla = $('.indicadorestabla' + datac).find("[data-columna='1']");
-                tabla.empty();
-                for (var a = 0; a < estr1.length; a++) {
-                    var valor = estr1[a];
-                    var cmp = gestionUsuario.campoMetasAnios(valor, "estra");
-                    tabla.append(cmp);
-                }
-            }
-            //campo 2 al 5
-            for (var i = 2; i < 7; i++) {
-                var estr = tabla_dato[i];
+            var tabla_dato = estr_dato[1];
+            var tabla = $('.indicadorestabla1').find("[data-columna]");
+            tabla.each(function(a){
+                var idx = (a + 1);
+                var estr = tabla_dato[idx];
+                var tipo = $(this).attr("data-tipo") || 1;
+                var valores = $(this).parent().attr("data-valores") || 0;
                 if (estr != undefined) {
-                    var tabla = $('.indicadorestabla' + datac).find("[data-columna='" + i + "']");
-                    tabla.empty();
-                    for (var a = 0; a < estr.length; a++) {
-                        var valor = estr[a];
-                        var tipo = tabla.data("tipo");
-                        var cmp = gestionUsuario.campostablaEstrategia(valor, tipo);
-                        tabla.append(cmp);
+                    $(this).empty();
+                    for (var j = 0; j < estr.length; j++) {
+                        var campo = estr[j];
+                        var cmp = gestionUsuario.campoMetasAnios(campo, tipo , valores);
+                        $(this).append(cmp);
                     }
                 }
-            }
-            //campos 7
-            var estr7 = tabla_dato[7];
-            if (estr7 != undefined) {
-                var tabla = $('.indicadorestabla' + datac).find("[data-columna='7']");
-                tabla.empty();
-                for (var a = 0; a < estr7.length; a++) {
-                    var valor = estr7[a];
-                    var cmp = gestionUsuario.campoMetasAnios(valor, "metas");
-                    tabla.append(cmp);
-                }
-            }
-            //campos 8
-            var estr8 = tabla_dato[8];
-            if (estr7 != undefined) {
-                var tabla = $('.indicadorestabla' + datac).find("[data-columna='8']");
-                tabla.empty();
-                for (var a = 0; a < estr8.length; a++) {
-                    var valor = estr8[a];
-                    var cmp = gestionUsuario.campoMetasAnios(valor, "anios");
-                    tabla.append(cmp);
-                }
-            }
+            });
             gestionUsuario.imprimirIndicadores();
         } else {
-            gestionUsuario.indicadoresVacios(tabla_none, tabla_estr, tablaespecial1_estr, tablaespecial2_estr);
+            gestionUsuario.indicadoresVacios();
             gestionUsuario.imprimirIndicadores();
         }
     },
-    campoMetasAnios: function (campo, tipo) {
+    campoMetasAnios: function (campo, tipo, arreglo) {
+        if (tipo == "mul"){
+            var dato = arreglo.split(',');
+            var cmp = '<div class="input-group input-group-sm">' +
+                '<select class="rounded-0 form-control general shadow-none">';
+                if (arreglo != undefined) {
+                    for (var i = 0; i < dato.length; i++) {
+                        var sel = (campo == dato[i]) ? "selected" : "";
+                        cmp += '<option ' + sel + '>' +  dato[i] + '</option>';
+                    }
+                }
+                cmp += '</select>' +
+                '<div class="input-group-append">' +
+                '<div class="input-group-text bg-white">' +
+                '<a href="#" class="text-danger remove my-auto"><i class="fa fa-trash"></i></a>' +
+                '</div>' +
+                '</div>' +
+                '</div>'; 
+            return cmp;
+        }
         if (tipo == "estra") {
+            var val1 = campo[0] || "";
+            var val2 = campo[1] || "";
             var cmp = '<div class="input-group row no-gutters">' +
                 '<div class="col-6">' +
-                '<input class="rounded-0 form-control form-control-sm general shadow-none" value="' + campo[0] + '" />' +
+                '<input class="rounded-0 form-control form-control-sm general shadow-none" value="' + val1 + '" />' +
                 '</div>' +
                 '<div class="col-6">' +
                 '<div class="input-group input-group-sm">' +
-                '<input class="rounded-0 form-control general shadow-none" value="' + campo[1] + '" />' +
+                '<input class="rounded-0 form-control general shadow-none" value="' + val2 + '" />' +
                 '<div class="input-group-append">' +
                 '<div class="input-group-text bg-white">' +
                 '<a href="#" class="text-danger remove my-auto"><i class="fa fa-trash"></i></a>' +
@@ -1956,16 +2051,19 @@ var gestionUsuario = {
             return cmp;
         }
         if (tipo == "metas") {
+            var val1 = campo[0] || "";
+            var val2 = campo[1] || "";
+            var val3 = campo[2] || "";
             var cmp = '<div class="input-group row no-gutters">' +
                 '<div class="col-4">' +
-                '<input class="rounded-0 form-control form-control-sm general border border-success shadow-none" value="' + campo[0] + '" />' +
+                '<input class="rounded-0 form-control form-control-sm general border border-success shadow-none" value="' + val1 + '" />' +
                 '</div>' +
                 '<div class="col-4">' +
-                '<input class="rounded-0 form-control form-control-sm general border border-warning shadow-none" value="' + campo[1] + '" />' +
+                '<input class="rounded-0 form-control form-control-sm general border border-warning shadow-none" value="' + val2 + '" />' +
                 '</div>' +
                 '<div class="col-4">' +
                 '<div class="input-group input-group-sm">' +
-                '<input class="rounded-0 form-control general border border-danger shadow-none" value="' + campo[2] + '" />' +
+                '<input class="rounded-0 form-control general border border-danger shadow-none" value="' + val3 + '" />' +
                 '<div class="input-group-append">' +
                 '<div class="input-group-text bg-white">' +
                 '<a href="#" class="text-danger remove my-auto"><i class="fa fa-trash"></i></a>' +
@@ -1975,7 +2073,8 @@ var gestionUsuario = {
                 '</div>' +
                 '</div>';
             return cmp;
-        } else {
+        } 
+        if (tipo == "anios") {
             var cmp = '<div class="input-group row no-gutters groupmes">';
             for (var i = 0; i < 12; i++) {
                 cmp += ' <div class="col p-0">' +
@@ -1997,6 +2096,17 @@ var gestionUsuario = {
                 '<div class="input-group-text bg-white">' +
                 '<a href="#" class="text-danger remove my-auto"><i class="fa fa-trash"></i></a>' +
                 '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+            return cmp;
+        }
+        if (tipo == 1) { 
+            var cmp = '<div class="input-group input-group-sm">' +
+                '<input class="rounded-0 form-control general shadow-none" value="' + campo + '" />' +
+                '<div class="input-group-append">' +
+                '<div class="input-group-text bg-white">' +
+                '<a href="#" class="text-danger remove my-auto"><i class="fa fa-trash"></i></a>' +
                 '</div>' +
                 '</div>' +
                 '</div>';
@@ -2118,9 +2228,9 @@ var gestionUsuario = {
             });
         });
         if (estado >= 1) {
-            alerta.html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Advertencia</strong> No debe dejar campos vacios.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            var mensaje = "No debe dejar tablas/campos vacios.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
         } else {
-            alerta.html("");
             var general = cadena.slice(0, -1);
             var data = {
                 'anio': anio,
@@ -2283,5 +2393,23 @@ var gestionUsuario = {
             }
         });
     },
+    respuestaAdvertencia: function (mensaje) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+        Toast.fire({
+            icon: 'warning',
+            title: 'Advertencia',
+            text: mensaje
+        })
+    }
 };
 gestionUsuario.constructor();

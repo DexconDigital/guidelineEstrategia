@@ -48,6 +48,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                         <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalprincipios">Principios Corporativos</a>
                         <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalmision">Misión</a>
                         <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalvision">Visión</a>
+                        <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalprocesos">Procesos</a>
                     </div>
                 </div>
             </li>
@@ -175,7 +176,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="text-center my-auto copyright text-muted">
-                        <div>Diseñado y Desarrollado por Dexcon Consultores SAS | <a href="https://www.dexcondigital.com/" target="_blank">Dexcon Digital</a><span class="dexcon_copy"> © Copyright <?php echo date('Y' ) ?>. Todos los derechos reservados.</span></div>
+                        <div>Diseñado y Desarrollado por Dexcon Consultores SAS | <a href="https://www.dexcondigital.com/" target="_blank">Dexcon Digital</a><span class="dexcon_copy"> © Copyright <?php echo date('Y') ?>. Todos los derechos reservados.</span></div>
                     </div>
                 </div>
             </footer>
@@ -341,6 +342,98 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                 <div class="modal-footer">
                     <button class="btn btn-negro" type="button" data-dismiss="modal">Cancelar</button>
                     <button class="btn btn-success" id="btn_vision">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal procesos -->
+    <div class="modal fade modal-fullscreen" id="modalprocesos" tabindex="-1" role="dialog" aria-labelledby="exampleModalprocesos" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-negro" id="exampleModalLabel2">Mapa de procesos</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="text-negro table-bordered table-sm w-100 mw-45">
+                        <thead>
+                            <tr>
+                                <th class="color-empresa text-center w-25">Tipo de procesos</th>
+                                <th class="color-empresa text-center">Alcance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 1. Estratégicos -->
+                            <tr>
+                                <td class="text-center">Estratégicos</td>
+                                <td>
+                                    <p>Incluye los procesos relacionados con el establecimiento de las políticas, estrategias, fijación de objetivos, provisión de comunicaciónes, aseguramiento de la disponibilidad de recursos necesarios y evaluación general o revisión de la dirección.</p>
+                                    <div class="mh-350">
+                                        <table class="w-100 procesogeneral listaproceso1">
+                                            <thead>
+                                                <tr>
+                                                    <th class="color-empresa text-center align-middle w-50">Nombre del proceso</th>
+                                                    <th class="color-empresa text-center align-middle" colspan="2">
+                                                        <label>Alcance</label>
+                                                        <a href="#!" class="btn btn-success btn-sm agregarprocesos text-decoration-none" data-index="1">Agregar</a>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- 2. Misionales -->
+                            <tr>
+                                <td class="text-center">Misionales</td>
+                                <td>
+                                    <p>Incorpora los procesos que proporcionan el resultado previsto por la empresa, en cumplimiento de su objeto social o razón de ser.</p>
+                                    <div class="mh-350">
+                                        <table class="w-100 procesogeneral listaproceso2">
+                                            <thead>
+                                                <tr>
+                                                    <th class="color-empresa text-center align-middle w-50">Comercial(GC)</th>
+                                                    <th class="color-empresa text-center align-middle" colspan="2">
+                                                        <label></label>
+                                                        <a href="#!" class="btn btn-success btn-sm agregarprocesos text-decoration-none" data-index="2">Agregar</a>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- 3. De apoyo -->
+                            <tr>
+                                <td class="text-center">De apoyo</td>
+                                <td>
+                                    <p>Son todos aquellos procesos por la provisión de los recursos, que son necesarios para los procesos estrategicos y los misionales.</p>
+                                    <div class="mh-350">
+                                        <table class="w-100 procesogeneral listaproceso3">
+                                            <thead>
+                                                <tr>
+                                                    <th class="color-empresa text-center align-middle w-50">Compras(GR)</th>
+                                                    <th class="color-empresa text-center align-middle" colspan="2">
+                                                        <label></label>
+                                                        <a href="#!" class="btn btn-success btn-sm agregarprocesos text-decoration-none" data-index="3">Agregar</a>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-negro" type="button" data-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-success grabarprocesos" type="button">Grabar</button>
                 </div>
             </div>
         </div>
@@ -1241,7 +1334,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
         </div>
     </div>
     <!-- Modal Seguimientos -->
-    <div class="modal fade modalvalidacion" id="modalseguimientos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal fade modalvalidacion modal-fullscreen" id="modalseguimientos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1268,12 +1361,15 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <tr>
                                             <th class="sticky-top color-empresa w-1"></th>
                                             <th class="sticky-top color-empresa align-middle text-center w-25">Iniciativas estratégicas</th>
-                                            <th class="calculo sticky-top color-empresa align-middle text-center">Fecha programada implementación</th>
-                                            <th class="calculo sticky-top color-empresa align-middle text-center">Fecha seguimineto</th>
-                                            <th class="calculo sticky-top color-empresa align-middle text-center">Planeado</th>
-                                            <th class="calculo sticky-top color-empresa align-middle text-center">En ejecución</th>
-                                            <th class="calculo sticky-top color-empresa align-middle text-center">Implementado</th>
-                                            <th class="calculo sticky-top color-empresa text-center">% implementado a la fecha</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-12">Fecha programada implementación</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-1">días</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-12">Fecha seguimiento</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-12">Fecha seguimiento real</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-1">Planeado</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-1">En ejecución</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-1">Implementado</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-12">Avance a la fecha</th>
+                                            <th class="calculo sticky-top color-empresa align-middle text-center w-12">% implementado a la fecha</th>
                                         </tr>
                                     </thead>
                                     <tbody class="cuerpo_seguimientos">
@@ -1281,7 +1377,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                     <tfoot>
                                         <tr>
                                             <td colspan="2" class="sticky-bottom color-empresa"></td>
-                                            <td colspan="5" class="sticky-bottom color-empresa">Promedio cumplimiento estrategias</td>
+                                            <td colspan="8" class="sticky-bottom color-empresa">Promedio cumplimiento estrategias</td>
                                             <td class="text-center totalgeneral sticky-bottom ">0%</td>
                                         </tr>
                                     </tfoot>
@@ -1956,8 +2052,8 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
         </div>
     </div>
     <!-- Modal Futuro -->
-    <div class="modal fade modalvalidacion" id="modalmando" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-xl" role="document">
+    <div class="modal fade modalvalidacion modal-fullscreen" id="modalmando" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-negro" id="exampleModalLabel2">Definición de estrategias de la organización</h5>
@@ -2059,6 +2155,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <thead>
                                             <tr>
                                                 <th class="w-100">Objetivos estratégicos y/o estrategias</th>
+                                                <th class="text-center"><a href="#!" class="btn btn-success btn-sm agregarobjetivos">Agregar</a></th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -2066,7 +2163,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <table class="text-negro table-bordered table-sm listaobjetivos w-100 mw-45">
                                             <thead>
                                                 <tr>
-                                                    <th colspan="2" class="sticky-top color-empresa text-center w-25">Perspectiva de talento humano</th>
+                                                    <th colspan="3" class="sticky-top color-empresa text-center w-25">Perspectiva de talento humano</th>
                                                     <th colspan="2" class="sticky-top color-empresa text-center w-25">Perspectiva de procesos internos</th>
                                                     <th colspan="2" class="sticky-top color-empresa text-center w-25">Perspectiva de cliente</th>
                                                     <th colspan="2" class="sticky-top color-empresa text-center w-25">Perspectiva financiera</th>
@@ -2117,21 +2214,24 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                     </div>
                     <div class="container-fluid table-responsive indicadortablas indicadorestabla1">
                         <div class="row flex-nowrap text-negro header">
-                            <div class="col p-0 mw-2600">
+                            <div class="col p-0 mw-3000">
                             </div>
                             <div class="col p-0 mw-600">
                                 <div class="d-block color-empresa border p-2 text-center">
                                     <span>Meta</span>
-                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="7" data-type="metas"><i class="fa fa-plus"></i></a>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="8" data-type="metas"><i class="fa fa-plus"></i></a>
                                 </div>
                             </div>
+                            <div class="col p-0 mw-1400 color-empresa"></div>
                             <div class="col p-0 mw-2400">
                                 <div class="d-block color-empresa border p-2 text-center">
                                     <span>Año <span class="anio_indicador"></span></span>
-                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="8" data-type="anios"><i class="fa fa-plus"></i></a>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="14" data-type="anios"><i class="fa fa-plus"></i></a>
                                 </div>
                             </div>
                         </div>
+                        
+                        
                         <div class="row flex-nowrap  text-negro">
                             <!--Direccionamiento estratégico-->
                             <div class="col text-center p-0 mw-600">
@@ -2139,7 +2239,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                     <span>Direccionamiento estratégico</span>
                                     <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="1" data-type="estra"><i class="fa fa-plus"></i></a>
                                 </div>
-                                <div class="indicadorvacioespecial0 vacio indicadordatos1 columnas2" data-columna="1" data-tipo="1"></div>
+                                <div class="indicadorvacioespecial0 vacio indicadordatos1 columnas2" data-columna="1" data-tipo="estra"></div>
                             </div>
                             <!--Directriz de política-->
                             <div class="col p-0 mw-400">
@@ -2157,29 +2257,37 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                 </div>
                                 <div class="indicadorvacio vacio indicadordatos3 columnas" data-columna="3" data-tipo="1"></div>
                             </div>
-                            <!--Proceso-->
+                            <!--Que hacer para cumplirlo-->
                             <div class="col p-0 mw-400">
                                 <div class="d-block color-empresa border text-center p-2">
-                                    <span>Proceso</span>
+                                    <span>Que hacer para cumplirlo</span>
                                     <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="4" data-type="1"><i class="fa fa-plus"></i></a>
                                 </div>
                                 <div class="indicadorvacio vacio indicadordatos4 columnas" data-columna="4" data-tipo="1"></div>
+                            </div>
+                            <!--Proceso-->
+                            <div class="col p-0 mw-400" data-valores=",Estratégicos,Misionales,De apoyo">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Proceso</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="5" data-type="mul"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="indicadorvacio vacio indicadordatos5 columnas" data-columna="5" data-tipo="mul"></div>
                             </div>
                             <!--Indicador-->
                             <div class="col p-0 mw-400">
                                 <div class="d-block color-empresa border text-center p-2">
                                     <span>Indicador</span>
-                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="5" data-type="1"><i class="fa fa-plus"></i></a>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="6" data-type="1"><i class="fa fa-plus"></i></a>
                                 </div>
-                                <div class="indicadorvacio vacio indicadordatos5 columnas" data-columna="5" data-tipo="1"></div>
+                                <div class="indicadorvacio vacio indicadordatos6 columnas" data-columna="6" data-tipo="1"></div>
                             </div>
                             <!--Fórmula-->
                             <div class="col p-0 mw-400">
                                 <div class="d-block color-empresa border text-center p-2">
                                     <span>Fórmula</span>
-                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="6" data-type="1"><i class="fa fa-plus"></i></a>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="7" data-type="1"><i class="fa fa-plus"></i></a>
                                 </div>
-                                <div class="indicadorvacio vacio indicadordatos6 columnas" data-columna="6" data-tipo="1"></div>
+                                <div class="indicadorvacio vacio indicadordatos7 columnas" data-columna="7" data-tipo="1"></div>
                             </div>
                             <!--Meta-->
                             <div class="col p-0 mw-600">
@@ -2190,7 +2298,47 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <div class="col-4 bg-red p-2">Deficiente</div>
                                     </div>
                                 </div>
-                                <div class="indicadorvacioespecial1 vacio indicadordatos7 columnas2" data-columna="7" data-tipo="1"></div>
+                                <div class="indicadorvacioespecial1 vacio indicadordatos8 columnas2" data-columna="8" data-tipo="metas"></div>
+                            </div>
+                            <!--Positivo si-->
+                            <div class="col p-0 mw-200" data-valores=",Aumenta,Disminuye">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Positivo si</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="9" data-type="mul"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="indicadorvacio vacio indicadordatos9 columnas" data-columna="9" data-tipo="mul"></div>
+                            </div>
+                            <!--Frecuencia-->
+                            <div class="col p-0 mw-200" data-valores=",Mensual,Bimensual,Trimestral,Cuatrimestral,Semestral,Anual">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Frecuencia</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="10" data-type="mul"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="indicadorvacio vacio indicadordatos10 columnas" data-columna="10" data-tipo="mul"></div>
+                            </div>
+                            <!--Tipo de indicador-->
+                            <div class="col p-0 mw-200" data-valores=",Eficiencia,Eficacia,Efectividad,Impacto">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Tipo de indicador</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="11" data-type="mul"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="indicadorvacio vacio indicadordatos11 columnas" data-columna="11" data-tipo="mul"></div>
+                            </div>
+                            <!--Fuente de los datos-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Fuente de los datos</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="12" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="indicadorvacio vacio indicadordatos12 columnas" data-columna="12" data-tipo="1"></div>
+                            </div>
+                            <!--Responsable-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Responsable</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarindicadores text-decoration-none" data-index="13" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="indicadorvacio vacio indicadordatos13 columnas" data-columna="13" data-tipo="1"></div>
                             </div>
                             <!--Promedio año-->
                             <div class="col p-0 mw-2400">
@@ -2211,11 +2359,11 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         <div class="col p-2 ">Promedio</div>
                                     </div>
                                 </div>
-                                <div class="indicadorvacioespecial2 vacio indicadordatos8 columnas2" data-columna="8" data-tipo="1"></div>
+                                <div class="indicadorvacioespecial2 vacio indicadordatos14 columnas2" data-columna="14" data-tipo="anios"></div>
                             </div>
                         </div>
                         <div class="row flex-nowrap text-negro pie">
-                            <div class="col p-0 mw-3200">
+                            <div class="col p-0 mw-5000">
                             </div>
                             <div class="col p-0 mw-2400">
                                 <div class="d-block border text-center">
@@ -2238,7 +2386,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             </div>
                         </div>
                         <div class="row flex-nowrap text-negro pietotal mb-2">
-                            <div class="col p-0 mw-3200">
+                            <div class="col p-0 mw-5000">
                             </div>
                             <div class="col p-0 mw-2400">
                                 <div class="d-block text-center">

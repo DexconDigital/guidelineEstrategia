@@ -1,1 +1,1 @@
-ALTER TABLE `estrategias` CHANGE `cmi` `cmi` LONGTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+ALTER TABLE `empresa` ADD `procesos` TEXT NULL DEFAULT NULL AFTER `principio`;

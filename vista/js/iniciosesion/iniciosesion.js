@@ -10,7 +10,6 @@ var inicioSesion = {
         var nit = formulario.find('#nit').val();
         var razon_social = formulario.find('#razon_social').val();
         var fecha = formulario.find('#fecha').val();
-
         if (fecha == '') {
             app.mensaje({
                 codigo: -1,
@@ -25,7 +24,6 @@ var inicioSesion = {
             });
             return;
         }
-
         if (nit == '') {
             app.mensaje({
                 codigo: -1,
@@ -33,7 +31,6 @@ var inicioSesion = {
             });
             return;
         }
-
         Swal.fire({
             icon: 'warning',
             title: "Ingrese la clave de seguridad",
@@ -68,7 +65,6 @@ var inicioSesion = {
                 showConfirmButton: false,
                 allowOutsideClick: false,
             });
-
             setTimeout(() => {
                 location.href = "menu.php";
             }, 4000);
@@ -89,7 +85,25 @@ var inicioSesion = {
                 text: "Usuario sin permisos",
             });
         } else {
-            location.href = "menu.php";
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+            Toast.fire({
+                icon: 'success',
+                title: 'Bienvenido'
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    location.href = "menu.php";
+                }
+            })
         }
     }
 };

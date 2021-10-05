@@ -170,6 +170,16 @@ class UsuarioDAO {
         ] );
         return $this->cnn->lastInsertId();
     }
+    
+    public function agregar_procesos( $id_empresa, $general ) {
+        $sql = "UPDATE empresa SET procesos=:procesos WHERE id_empresa=:id_empresa";
+        $sentencia = $this->cnn->prepare( $sql );
+        $sentencia->execute( [
+            'procesos' => $general,
+            'id_empresa' => $id_empresa
+        ] );
+        return $this->cnn->lastInsertId();
+    }
 
     public function consultar_dignostico( $id_empresa ) {
         $sql = "SELECT * FROM diagnostico WHERE id_empresa=:id_empresa";

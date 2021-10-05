@@ -300,12 +300,20 @@ body.swal2-shown {
     transition: all 0.3s ease 0s;
 }
 
+.mw-200 {
+    min-width: 200px;
+}
+
 .mw-400 {
     min-width: 400px;
 }
 
 .mw-600 {
     min-width: 600px;
+}
+
+.mw-1400 {
+    min-width: 1400px;
 }
 
 .mw-2400 {
@@ -316,8 +324,16 @@ body.swal2-shown {
     min-width: 2600px;
 }
 
+.mw-3000 {
+    min-width: 3000px;
+}
+
 .mw-3200 {
     min-width: 3200px;
+}
+
+.mw-5000 {
+    min-width: 5000px;
 }
 
 .mw-5600 {
