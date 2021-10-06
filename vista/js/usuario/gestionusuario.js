@@ -1156,10 +1156,10 @@ var gestionUsuario = {
         var tr = '<tr>' +
             '<td class="align-middle"><a href="#" class="text-danger remove"><i class="fa fa-trash"></i></a></td>' +
             '<td class="align-middle"><input class="form-control form-control-sm data general" value="' + campo[0] + '" /></td>' +
-            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0" value="' + campo[1] + '" /></td>' +
+            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0 data-seg" value="' + campo[1] + '" /></td>' +
             '<td class="align-middle"><input type="number" class="form-control form-control-sm data general mb-0 dias" min="1" max="90" value="' + campo[2] + '" /></td>' +
-            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0 data-seg" value="' + campo[3] + '" /></td>' +
-            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0 real" value="' + campo[4] + '" readonly/></td>';
+            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0 real" value="' + campo[3] + '" readonly /></td>' +
+            '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0" value="' + campo[4] + '"/></td>';
         for (var i = 5; i <= 7; i++) {
             var selected = (campo[i] == "1") ? "selected" : "";
             tr += '<td class="align-middle">' +
@@ -1217,7 +1217,7 @@ var gestionUsuario = {
             }
             $(this).find('td:last').css("background-color", colorgeneral).css("color", textogeneral).html(totalgeneral + "%");
             //Fecha de seguimiento real 
-            var dias = parseInt($(this).find('.dias').val()) + 1 || 0; // Número de días a agregar
+            var dias = parseInt($(this).find('.dias').val()) + 1 || 1; // Número de días a agregar
             var fecha_seg = new Date($(this).find('.data-seg').val());
             fecha_seg.setDate(fecha_seg.getDate() + dias);
             var dia = ("0" + fecha_seg.getDate()).slice(-2);
@@ -1915,8 +1915,33 @@ var gestionUsuario = {
                 $(this).parents(".input-group").remove();
             });
         });
+        //Alerta calculos
+        $('.meses').click(function (e) {
+            var input = $(this);
+            Swal.fire({
+                icon: 'warning',
+                title: "Ingrese el calculo",
+                html: '<input type="number" id="numero" class="form-control" placeholder="Numerador">' + 
+                '<input type="number" id="divisor" class="form-control" placeholder="Denominador">',
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                cancelButtonColor: "#dc3545",
+                confirmButtonColor: "#71c904",
+                confirmButtonText: "Calcular",
+                position: 'top',
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    var numero = $('#numero').val() || 0;
+                    var divisor = $('#divisor').val() || 0;
+                    var resultado = (numero / divisor);
+                    input.val(resultado.toFixed(2));
+                    gestionUsuario.imprimirIndicadores();
+                }
+            })
+        });
         //Calculos x mes
         gestionUsuario.imprimirIndicadores();
+        //Agregar indicadores
         $('.agregarindicadores').on('click', function (e) {
             e.stopImmediatePropagation();
             var estr = "";
@@ -2116,7 +2141,7 @@ var gestionUsuario = {
     imprimirIndicadores: function (e) {
         var tabla = $('.indicadorestabla1');
         gestionUsuario.calcularIndicadores();
-        $('.indicadorestabla1 .general.meses').keyup(function () {
+        $('.indicadorestabla1 .general.meses').keyup(function (e) {
             gestionUsuario.calcularIndicadores();
         });
         //Confirmación cerrar
@@ -2144,7 +2169,7 @@ var gestionUsuario = {
             "suma11": 0,
             "suma12": 0
         };
-        //Calcular fila
+        //Calcular fila promedio
         $('.indicadorestabla1 .groupmes').each(function () {
             var sum = 0;
             var cantfilas = 12;

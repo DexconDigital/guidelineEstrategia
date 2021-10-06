@@ -294,8 +294,8 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                         <ul>
                             <li>¿En que negocio estamos?</li>
                             <li>¿Cual es el negocio?</li>
-                            <li>¿Para que existe la empresa? Propositos</li>
-                            <li>Cuales son los elementos diferenciales?: Aptitud distintiva</li>
+                            <li>¿Para que existe la empresa?: propósitos</li>
+                            <li>¿Cuales son los elementos diferenciales?: Aptitud distintiva</li>
                             <li>¿Quienes son nuestros clientes?</li>
                             <li>¿Cuales son los productos o servicios?</li>
                             <li>¿Cuales son los mercados presentes y futuros?</li>
@@ -376,7 +376,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                                 <tr>
                                                     <th class="color-empresa text-center align-middle w-50">Nombre del proceso</th>
                                                     <th class="color-empresa text-center align-middle" colspan="2">
-                                                        <label>Alcance</label>
+                                                        <label>Responsable</label>
                                                         <a href="#!" class="btn btn-success btn-sm agregarprocesos text-decoration-none" data-index="1">Agregar</a>
                                                     </th>
                                                 </tr>
@@ -2188,7 +2188,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
         </div>
     </div>
     <!-- Modal CMI -->
-    <div class="modal fade modalvalidacion modal-fullscreen" id="modalcmi" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal fade modalvalidacion modal-fullscreen" id="modalcmi" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
