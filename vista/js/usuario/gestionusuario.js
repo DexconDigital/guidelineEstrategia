@@ -1915,30 +1915,6 @@ var gestionUsuario = {
                 $(this).parents(".input-group").remove();
             });
         });
-        //Alerta calculos
-        $('.meses').click(function (e) {
-            var input = $(this);
-            Swal.fire({
-                icon: 'warning',
-                title: "Ingrese el calculo",
-                html: '<input type="number" id="numero" class="form-control" placeholder="Numerador">' + 
-                '<input type="number" id="divisor" class="form-control" placeholder="Denominador">',
-                showCancelButton: true,
-                cancelButtonText: "Cancelar",
-                cancelButtonColor: "#dc3545",
-                confirmButtonColor: "#71c904",
-                confirmButtonText: "Calcular",
-                position: 'top',
-            }).then(function (result) {
-                if (result.isConfirmed) {
-                    var numero = $('#numero').val() || 0;
-                    var divisor = $('#divisor').val() || 0;
-                    var resultado = (numero / divisor);
-                    input.val(resultado.toFixed(2));
-                    gestionUsuario.imprimirIndicadores();
-                }
-            })
-        });
         //Calculos x mes
         gestionUsuario.imprimirIndicadores();
         //Agregar indicadores
@@ -2147,6 +2123,30 @@ var gestionUsuario = {
         //Confirmación cerrar
         tabla.find('.general').keyup(function () {
             usuarioModelo.cambios = 1;
+        });
+        //Alerta calculos
+        $('.meses').click(function (e) {
+            var input = $(this);
+            Swal.fire({
+                icon: 'warning',
+                title: "Ingrese el calculo",
+                html: '<input type="number" id="numero" class="form-control" placeholder="Numerador">' + 
+                '<input type="number" id="divisor" class="form-control" placeholder="Denominador">',
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                cancelButtonColor: "#dc3545",
+                confirmButtonColor: "#71c904",
+                confirmButtonText: "Calcular",
+                position: 'top',
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    var numero = $('#numero').val() || 0;
+                    var divisor = $('#divisor').val() || 0;
+                    var resultado = (numero / divisor);
+                    input.val(resultado.toFixed(2));
+                    gestionUsuario.calcularIndicadores();
+                }
+            })
         });
     },
     calcularIndicadores: function (e) {
