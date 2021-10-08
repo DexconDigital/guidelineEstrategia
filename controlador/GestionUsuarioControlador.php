@@ -70,6 +70,7 @@ class GestionUsuarioControlador extends GenericoControlador {
                 }
                 $datos->axiologica = $generalArray;
             }
+            //Procesos
             if ( $datos->procesos != "" ) {
                 $procesos = explode( "|", $datos->procesos );
                 $generalArray = [];
@@ -80,6 +81,18 @@ class GestionUsuarioControlador extends GenericoControlador {
                     $generalArray[$proceso_datos[0]][$proceso_datos[1]][$proceso_datos[2]] = $proceso_datos[3];
                 }
                 $datos->procesos = $generalArray;
+            }
+            //Seguimiento
+            if ( $datos->seguimientos != "" ) {
+                $seguimientos = explode( "|", $datos->seguimientos );
+                $generalArray = [];
+                for ( $i = 0; $i < count( $seguimientos );
+                $i++ ) {
+                    $seguimiento = $seguimientos[$i];
+                    $seg_datos = explode( "•", $seguimiento );
+                    $generalArray[$seg_datos[0]][$seg_datos[1]] = $seg_datos[2];
+                }
+                $datos->seguimientos = $generalArray;
             }
             $datos->usuario = $_SESSION['usuario_planfuturo'][1];
             $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se consultó correctamente', 'datos' => $datos] );

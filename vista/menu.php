@@ -19,7 +19,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link rel="stylesheet" href="../css/dist/sweetalert.css">
     <!-- Custom styles for this template-->
-    <link href="../css/sb-admin-2.css?v=3" rel="stylesheet">
+    <link href="../css/sb-admin-2.css?v=4" rel="stylesheet">
     <link href="../css/styles.css?v=4" rel="stylesheet">
 </head>
 <div class="loader">
@@ -146,26 +146,15 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Plan de Futuro</h1>
-                    </div>
                     <!-- Content Row -->
                     <div class="row">
                         <div class="col-lg-6 mb-4">
                             <!-- Illustrations -->
                             <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 text-primary">Ejemplo</h6>
+                                <div class="card-header color-empresa py-3">
+                                    <h3 class="m-0">Seguimientos</h3>
                                 </div>
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="../img/logo.png" alt="...">
-                                    </div>
-                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                                    <a target="_blank" rel="nofollow" href="https://www.dexcondigital.com">Visitar</a>
-                                </div>
+                                <div class="card-body text-negro" id="calendario"></div>
                             </div>
                         </div>
                     </div>
@@ -2205,7 +2194,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                         </div>
                         <input id="anio_tabla" class="form-control form-control anio_tabla col-3 bg-white" type="number" min="1900" max="2099" step="1">
                         <div class="input-group-append">
-                            <button class="btn color-empresa dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reportes</button>
+                            <button class="btn color-empresa dropdown-toggle rpt_cmi" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled="disabled">Reportes</button>
                             <div class="dropdown-menu p-0">
                                 <a class="dropdown-item cmi_reporte" data-reporte="pdf" href="#!">PDF</a>
                                 <a class="dropdown-item cmi_reporte" data-reporte="excel" href="#!">Excel</a>
@@ -2438,7 +2427,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="../css/dist/sweetalert.js"></script>
     <script src="js/menu.js?v=2" type="text/javascript"></script>
-    <script src="../js/sb-admin-2.js?v=1"></script>
+    <script src="../js/sb-admin-2.js?v=2"></script>
     <script src="js/usuario/gestionusuario.js?v=<?php echo uniqid(); ?>" type="text/javascript"></script>
 
 </body>

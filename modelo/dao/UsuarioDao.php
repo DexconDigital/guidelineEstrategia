@@ -39,7 +39,7 @@ class UsuarioDAO {
     }
 
     public function consultar_datos( $id_empresa ) {
-        $sql = "SELECT * FROM  empresa WHERE id_empresa=:id_empresa";
+        $sql = "SELECT e.*, es.seguimientos FROM empresa e LEFT JOIN estrategias es ON e.id_empresa = es.id_empresa WHERE e.id_empresa=:id_empresa";
         $sentencia = $this->cnn->prepare( $sql );
         $sentencia->execute( ['id_empresa'=>$id_empresa] );
         return $sentencia->fetch( PDO::FETCH_OBJ );

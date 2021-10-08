@@ -6,6 +6,7 @@ var usuarioModelo = {
     listaObjetivos: [],
     listaIndicadores: [],
     listaDofa: [],
+    textocolor: "",
     cambios: 0,
     pos: -1
 };
@@ -34,7 +35,7 @@ var gestionUsuario = {
         $('.grabar_cmi').on('click', gestionUsuario.agregar_CMI);
         $('#usuarios').on('click', gestionUsuario.consultardatosUsuarios);
         gestionUsuario.modalCambiosDiagnostico();
-        $('[data-toggle="popover"]').popover()
+        $('[data-toggle="popover"]').popover();
         $('.yearpicker').datepicker({
             minViewMode: 2,
             format: 'yyyy'
@@ -84,6 +85,36 @@ var gestionUsuario = {
         gestionUsuario.datosprocesos(datos);
         //color de la empresa 
         gestionUsuario.coloresGeneral(datos);
+        //Calendario seguimientos 
+        gestionUsuario.calendarioSeguimientos(datos);
+    },
+    calendarioSeguimientos: function (datos) {
+        var seg = datos.seguimientos;
+        var eventos = [];
+        for (var i = 0; i < seg.length; i++) {
+            eventos.push({
+                title: seg[i][0],
+                start: seg[i][3]
+            })
+        }
+        $('#calendario').fullCalendar("destroy");
+        $('#calendario').fullCalendar({
+            locale: 'es',
+            header: {
+                left: 'prev,next,today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            events: eventos,
+            eventTextColor: usuarioModelo.textocolor,
+            eventColor: datos.color,
+            eventAfterRender: function (event, element) {
+                $(element).tooltip({
+                    title: event.title,
+                    container: "body"
+                });
+            }
+        });
     },
     consultardatosUsuarios: function (e) {
         var data = {
@@ -1169,7 +1200,7 @@ var gestionUsuario = {
                 '</select>' +
                 '</td>';
         }
-        tr += 
+        tr +=
             '<td class="align-middle"><input type="date" class="form-control form-control-sm data general mb-0" value="' + campo[8] + '" /></td>' +
             '<td class="data-fila text-center align-middle"></td>' +
             '</tr>';
@@ -1194,7 +1225,7 @@ var gestionUsuario = {
         var text_color = "white";
         //Restringir dias hasta 90
         $('.dias').on('mouseup keyup', function () {
-          $(this).val(Math.min(90, Math.max(0, $(this).val())));
+            $(this).val(Math.min(90, Math.max(0, $(this).val())));
         });
         //Calcular fila
         $('.listaseguimientos tr:has(td):not(:last)').each(function () {
@@ -1222,7 +1253,7 @@ var gestionUsuario = {
             fecha_seg.setDate(fecha_seg.getDate() + dias);
             var dia = ("0" + fecha_seg.getDate()).slice(-2);
             var mes = ("0" + (fecha_seg.getMonth() + 1)).slice(-2);
-            var real = fecha_seg.getFullYear()+"-"+(mes)+"-"+(dia) ;
+            var real = fecha_seg.getFullYear() + "-" + (mes) + "-" + (dia);
             if (fecha_seg != undefined) {
                 $(this).find('.real').val(real);
             }
@@ -1655,7 +1686,7 @@ var gestionUsuario = {
                 '</div>' +
                 '</div>' +
                 '</div>';
-        } 
+        }
         if (pos == 0) {
             var cmp = '<input class="rounded-0 form-control form-control-sm general shadow-none" value="' + campo + '" />';
         }
@@ -1910,7 +1941,7 @@ var gestionUsuario = {
             gestionUsuario.indicadoresVacios();
         }
         //remover 
-        tabla.each(function(a){
+        tabla.each(function (a) {
             $(this).on('click', '.remove', function () {
                 $(this).parents(".input-group").remove();
             });
@@ -1973,25 +2004,44 @@ var gestionUsuario = {
         });
     },
     indicadoresVacios: function (e) {
+        $(".rpt_cmi").attr("disabled", "disabled");
+        //Cargar Visión, Misión y Promesa de servicio
+        var arry = {};
         var tabla = $('.indicadorestabla1').find("[data-columna]");
-        tabla.each(function(a){
+        var indx = 2;
+        arry[0] = ["Visión", usuarioModelo.listaUsuario.vision];
+        arry[1] = ["Misión", usuarioModelo.listaUsuario.mision];
+        $('.futurotabla2 .general').each(function (index, tr) {
+            var valor = $(this).val();
+            arry[indx] = ["Promesa de servicio", valor];
+            indx++;
+        });
+        //Cargar los campos
+        tabla.each(function (a) {
             var idx = (a + 1);
             var tipo = $(this).attr("data-tipo") || 1;
             var valores = $(this).parent().attr("data-valores") || 0;
             $(this).empty();
             var campo = "";
-            var cmp = gestionUsuario.campoMetasAnios(campo, tipo , valores);
-            $(this).append(cmp);
+            if (a == 0) {
+                for (var i = 0; i < indx; i++) {
+                    var cmp = gestionUsuario.campoMetasAnios(arry[i], tipo, valores);
+                    $(this).append(cmp);
+                }
+            } else {
+                var cmp = gestionUsuario.campoMetasAnios(campo, tipo, valores);
+                $(this).append(cmp);
+            }
         });
-        
     },
     indicadoresLlenos: function (indicador_general, anio_cambio) {
+        $(".rpt_cmi").removeAttr("disabled");
         //Revisar si existe el año en el arreglo
         var estr_dato = indicador_general[anio_cambio];
         if (estr_dato != undefined) {
             var tabla_dato = estr_dato[1];
             var tabla = $('.indicadorestabla1').find("[data-columna]");
-            tabla.each(function(a){
+            tabla.each(function (a) {
                 var idx = (a + 1);
                 var estr = tabla_dato[idx];
                 var tipo = $(this).attr("data-tipo") || 1;
@@ -2000,7 +2050,7 @@ var gestionUsuario = {
                     $(this).empty();
                     for (var j = 0; j < estr.length; j++) {
                         var campo = estr[j];
-                        var cmp = gestionUsuario.campoMetasAnios(campo, tipo , valores);
+                        var cmp = gestionUsuario.campoMetasAnios(campo, tipo, valores);
                         $(this).append(cmp);
                     }
                 }
@@ -2012,23 +2062,23 @@ var gestionUsuario = {
         }
     },
     campoMetasAnios: function (campo, tipo, arreglo) {
-        if (tipo == "mul"){
+        if (tipo == "mul") {
             var dato = arreglo.split(',');
             var cmp = '<div class="input-group input-group-sm">' +
                 '<select class="rounded-0 form-control general shadow-none">';
-                if (arreglo != undefined) {
-                    for (var i = 0; i < dato.length; i++) {
-                        var sel = (campo == dato[i]) ? "selected" : "";
-                        cmp += '<option ' + sel + '>' +  dato[i] + '</option>';
-                    }
+            if (arreglo != undefined) {
+                for (var i = 0; i < dato.length; i++) {
+                    var sel = (campo == dato[i]) ? "selected" : "";
+                    cmp += '<option ' + sel + '>' + dato[i] + '</option>';
                 }
-                cmp += '</select>' +
+            }
+            cmp += '</select>' +
                 '<div class="input-group-append">' +
                 '<div class="input-group-text bg-white">' +
                 '<a href="#" class="text-danger remove my-auto"><i class="fa fa-trash"></i></a>' +
                 '</div>' +
                 '</div>' +
-                '</div>'; 
+                '</div>';
             return cmp;
         }
         if (tipo == "estra") {
@@ -2074,7 +2124,7 @@ var gestionUsuario = {
                 '</div>' +
                 '</div>';
             return cmp;
-        } 
+        }
         if (tipo == "anios") {
             var cmp = '<div class="input-group row no-gutters groupmes">';
             for (var i = 0; i < 12; i++) {
@@ -2102,7 +2152,7 @@ var gestionUsuario = {
                 '</div>';
             return cmp;
         }
-        if (tipo == 1) { 
+        if (tipo == 1) {
             var cmp = '<div class="input-group input-group-sm">' +
                 '<input class="rounded-0 form-control general shadow-none" value="' + campo + '" />' +
                 '<div class="input-group-append">' +
@@ -2130,8 +2180,8 @@ var gestionUsuario = {
             Swal.fire({
                 icon: 'warning',
                 title: "Ingrese el calculo",
-                html: '<input type="number" id="numero" class="form-control" placeholder="Numerador">' + 
-                '<input type="number" id="divisor" class="form-control" placeholder="Denominador">',
+                html: '<input type="number" id="numero" class="form-control" placeholder="Numerador">' +
+                    '<input type="number" id="divisor" class="form-control" placeholder="Denominador">',
                 showCancelButton: true,
                 cancelButtonText: "Cancelar",
                 cancelButtonColor: "#dc3545",
@@ -2284,6 +2334,7 @@ var gestionUsuario = {
             body.append('<style class="color-sidebar">.sidebar-dark .nav-item .nav-link[data-toggle="collapse"]::after{color: ' + texto_color + ';}</style>');
             body.append('<style class="color-sidebar">.sidebar-dark #sidebarToggle::after{color: ' + texto_color + ';}</style>');
             body.append('<style class="color-sidebar">.sidebar-dark.toggled #sidebarToggle::after{color: ' + texto_color + ';}</style>');
+            usuarioModelo.textocolor = texto_color;
         } else {
             color_empresa.addClass("bg-gradient-primary text-light")
         }
@@ -2336,6 +2387,7 @@ var gestionUsuario = {
     respuestaEstrategias: function (respuesta) {
         if (respuesta.codigo == 1) {
             gestionUsuario.consultarEstrategias();
+            gestionUsuario.consultadatos();
             Swal.fire({
                 icon: 'success',
                 title: "Perfecto",
