@@ -6,7 +6,7 @@ var usuarioModelo = {
     listaObjetivos: [],
     listaIndicadores: [],
     listaDofa: [],
-    textocolor: "",
+    textocolor: "white",
     cambios: 0,
     pos: -1
 };
