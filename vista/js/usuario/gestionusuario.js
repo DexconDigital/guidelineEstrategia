@@ -2321,6 +2321,7 @@ var gestionUsuario = {
         var color_icono1 = $('.fa-cog');
         var body = $('body');
         var color = datos.color;
+        
         if (datos.color != "" && datos.color != null) {
             //color general de vistas
             color_empresa.removeClass("bg-gradient-primary text-light");
@@ -2335,7 +2336,9 @@ var gestionUsuario = {
             body.append('<style class="color-sidebar">.sidebar-dark #sidebarToggle::after{color: ' + texto_color + ';}</style>');
             body.append('<style class="color-sidebar">.sidebar-dark.toggled #sidebarToggle::after{color: ' + texto_color + ';}</style>');
             usuarioModelo.textocolor = texto_color;
+            $(".img-profile").css("color", datos.color);
         } else {
+            $(".img-profile").css("color", "black");
             color_empresa.addClass("bg-gradient-primary text-light")
         }
     },

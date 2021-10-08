@@ -124,7 +124,10 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#!" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="nombre_empresa"></span>
-                                <img class="img-profile rounded-circle" src="../img/perfil.png">
+                                <div class="img-profile">
+                                    <i class="fas fa-user-circle fa-2x"></i>
+                                </div>
+                                
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -2409,7 +2412,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel2">¿Realmente quiere salir?</h5>
+                    <h5 class="modal-title text-dark" id="exampleModalLabel2">¿Realmente quiere salir?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
