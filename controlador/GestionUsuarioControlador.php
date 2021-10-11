@@ -1703,7 +1703,7 @@ class GestionUsuarioControlador extends GenericoControlador {
                 $tablas .= ( $key == 1 ) ? "<td colspan='2'></td>" : "";
                 foreach ( $titulos[$key] as $indice => $valor ) {
                     $tablas .=
-                    "<td style='width:5px;background-color:black; color:white;border: 0.5px solid #858796;'>{$indice}</td>
+                    "<td style='width:10px;background-color:black; color:white;border: 0.5px solid #858796;'>{$indice}</td>
                     <td style='text-align:center;width:33.33%;background-color:black; color:white;border: 0.5px solid #858796;'>{$valor}</td>";
                 }
                 $tablas .= "<tr>";
