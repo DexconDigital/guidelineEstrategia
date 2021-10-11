@@ -30,6 +30,8 @@ var gestionUsuario = {
         $('#btn_referencia2').on('click', gestionUsuario.agregar_referencia2);
         $('#btn_principios2').on('click', gestionUsuario.agregar_principios2);
         $('#pci, #poam, #dofa, #dofaana').on('click', gestionUsuario.consultadatosDiagnostico);
+        $('#interes').on('click', gestionUsuario.consultadatosDiagnostico);
+        $('.grabar_interes').on('click', gestionUsuario.agregar_Interes);
         $('.grabar_futuro').on('click', gestionUsuario.agregar_Futuro);
         $('.grabar_objetivos').on('click', gestionUsuario.agregar_Objetivos);
         $('.grabar_cmi').on('click', gestionUsuario.agregar_CMI);
@@ -608,10 +610,82 @@ var gestionUsuario = {
     },
     respuestaconsultadatosDiagnostico: function (respuesta) {
         var datos = respuesta.datos;
+        gestionUsuario.datosInteres(datos);
         gestionUsuario.datosPCI(datos);
         gestionUsuario.datosPOAM(datos);
         gestionUsuario.datosDofaResumido(datos.dofa);
         gestionUsuario.datosDofaAnalisis(datos.dofa_analisis);
+    },
+    datosInteres: function (datos) {
+        var interes_general = datos.interes;
+        var tabla = $('.interestabla').find("[data-columna]");
+        if (interes_general != null && interes_general != "") {
+            tabla.each(function (a) {
+                $(this).empty();
+                var idx = (a + 1);
+                var estr = interes_general[idx];
+                for (var j = 0; j < estr.length; j++) {
+                    var campo = estr[j];
+                    var cmp = gestionUsuario.campostablaEstrategia(campo, 1);
+                    $(this).append(cmp);
+                }
+            });
+        } else {
+            tabla.each(function (a) {
+                $(this).empty();
+                var campo = "";
+                var cmp = gestionUsuario.campostablaEstrategia(campo, 1);
+                $(this).append(cmp);
+            });
+        }
+        //Remover 
+        tabla.each(function (a) {
+            $(this).on('click', '.remove', function () {
+                $(this).parents(".input-group").remove();
+                usuarioModelo.cambios = 1;
+            });
+        });
+        //Agregar
+        $('.agregarinteres').on('click', function (e) {
+            e.stopImmediatePropagation();
+            var estr = "";
+            var idx = $(this).attr("data-index");
+            var cmp = gestionUsuario.campostablaEstrategia(estr, 1);
+            $('.interesdatos' + idx).append(cmp);
+            usuarioModelo.cambios = 1;
+        });
+    },
+    agregar_Interes: function (e) {
+        var cadena = "";
+        var estado = 0;
+        var tabla = $('.interestabla');
+        var contador_vacios = $('.interesvacio').length;
+        for (var con = 1; con <= contador_vacios; con++) {
+            var contador = $('.interesdatos' + con + ' > div.input-group').length;
+            estado += (contador == 0) ? 1 : 0;
+        }
+        tabla.each(function () {
+            $(this).find('.columnas').each(function (a) {
+                var columna = $(this).attr("data-columna");
+                $(this).find('.general').each(function (index, td) {
+                    var val = $(td).val();
+                    var valor = val.split("|").join("");
+                    var valor_general = valor.split("•").join("");
+                    cadena += columna + "•" + index + "•" + valor_general + "|";
+                });
+            });
+        });
+        if (estado >= 1) {
+            var mensaje = "No debe dejar tablas/campos vacios.";
+            gestionUsuario.respuestaAdvertencia(mensaje);
+        } else {
+            var general = cadena.slice(0, -1);
+            var data = {
+                'general': general,
+                'id_empresa': usuarioModelo.listaUsuario.id_empresa
+            }
+            app.ajax('../controlador/GestionUsuarioControlador.php?opcion=agregar_interes', data, gestionUsuario.respuestaDiagnostico);
+        }
     },
     datosPCI: function (datos) {
         //PCI
@@ -2267,7 +2341,6 @@ var gestionUsuario = {
         $(".cmi_total").removeClass("bg-red").removeClass("bg-amarillo").removeClass("bg-verde").addClass(color_final);
     },
     agregar_CMI: function (e) {
-        var total_tablas = $(".estrategiatablas").length;
         var cadena = "";
         var estado = 0;
         var alerta = $(".alertacmi");
@@ -2321,7 +2394,6 @@ var gestionUsuario = {
         var color_icono1 = $('.fa-cog');
         var body = $('body');
         var color = datos.color;
-        
         if (datos.color != "" && datos.color != null) {
             //color general de vistas
             color_empresa.removeClass("bg-gradient-primary text-light");

@@ -197,7 +197,17 @@ class UsuarioDAO {
         ] );
         return $this->cnn->lastInsertId();
     }
-
+    
+    public function agregar_interes( $id_empresa, $interes ) {
+        $sql = "UPDATE diagnostico SET interes=:interes WHERE id_empresa=:id_empresa";
+        $sentencia = $this->cnn->prepare( $sql );
+        $sentencia->execute( [
+            'interes' => $interes,
+            'id_empresa' => $id_empresa
+        ] );
+        return $this->cnn->lastInsertId();
+    }
+        
     public function agregar_pci( $id_empresa, $pci ) {
         $sql = "UPDATE diagnostico SET pci=:pci WHERE id_empresa=:id_empresa";
         $sentencia = $this->cnn->prepare( $sql );

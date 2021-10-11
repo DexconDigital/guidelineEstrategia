@@ -251,6 +251,18 @@ class GestionUsuarioControlador extends GenericoControlador {
                     }
                     $datos->dofa_analisis = $generalArray;
                 }
+                //Interes
+                if ( $datos->interes != "" ) {
+                    $interes = explode( "|", $datos->interes );
+                    $generalArray = [];
+                    for ( $i = 0; $i < count( $interes );
+                    $i++ ) {
+                        $interes_dato = $interes[$i];
+                        $interes_datos = explode( "•", $interes_dato );
+                        $generalArray[$interes_datos[0]][$interes_datos[1]]= $interes_datos[2];
+                    }
+                    $datos->interes = $generalArray;
+                }
             }
             //Si no existe empresa en la tabla diagnostico
             if ( !$datos ) {
@@ -309,7 +321,23 @@ class GestionUsuarioControlador extends GenericoControlador {
             $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
         }
     }
-
+        
+    public function agregar_interes() {
+        try {
+            Validacion::validar( ['general' => 'obligatorio'], $_POST );
+            $id_empresa = $_POST['id_empresa'];
+            $general = $_POST['general'];
+            $consultar_dignostico = $this->usuarioDAO->consultar_dignostico( $id_empresa );
+            if ( !$consultar_dignostico ) {
+                $this->usuarioDAO->agregar_diagnostico( $id_empresa );
+            }
+            $this->usuarioDAO->agregar_interes( $id_empresa, $general );
+            $this->respuestaJSON( ['codigo' => 1, 'mensaje' => 'Se grabó correctamente' ] );
+        } catch ( ValidacionExcepcion $error ) {
+            $this->respuestaJSON( ['codigo' => $error->getCode(), 'mensaje' => $error->getMessage()] );
+        }
+    }
+        
     public function agregar_pci() {
         try {
             Validacion::validar( ['general' => 'obligatorio'], $_POST );

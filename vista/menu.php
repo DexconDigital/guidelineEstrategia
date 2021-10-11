@@ -49,6 +49,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                         <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalmision">Misión</a>
                         <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalvision">Visión</a>
                         <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalprocesos">Procesos</a>
+                        <a class="collapse-item" href="#!" data-toggle="modal" data-target="#modalinteres" id="interes">Partes interesadas</a>
                     </div>
                 </div>
             </li>
@@ -127,7 +128,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                 <div class="img-profile">
                                     <i class="fas fa-user-circle fa-2x"></i>
                                 </div>
-                                
+
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -492,7 +493,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                     </div>
 
                     <hr>
-                    <!-- Grupos de Referencia -->
+                    <!-- Grupos de Referencia 
                     <div id="Referencia">
                         <div class="row">
                             <div class="col-sm-6">
@@ -512,7 +513,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             <button class="btn btn-success" id="btn_referencia">Grabar Referencias</button>
                         </div>
                     </div>
-                    <hr>
+                    <hr> -->
                     <!-- Principios corporativos -->
                     <div id="Principios">
                         <div class="row">
@@ -543,6 +544,102 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
 
                 <div class="modal-footer">
                     <button class="btn btn-negro" type="button" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal CMI -->
+    <div class="modal fade modalvalidacion modal-fullscreen" id="modalinteres" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-negro" id="exampleModalLabel2">Anexo a matriz de necesidades y expectativas de partes interesadas</h5>
+                    <button class="close cerrar" type="button" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid table-responsive interestabla">
+                        <div class="row flex-nowrap  text-negro">
+                            <!--Clasificación de partes interesadas-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Clasificación de partes interesadas</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="1" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos1 columnas" data-columna="1" data-tipo="1"></div>
+                            </div>
+                            <!--Requisitos-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Requisitos</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="2" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos2 columnas" data-columna="2" data-tipo="1"></div>
+                            </div>
+                            <!--Necesidades-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Necesidades</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="3" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos3 columnas" data-columna="3" data-tipo="1"></div>
+                            </div>
+                            <!--Expectativas-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Expectativas</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="4" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos4 columnas" data-columna="4" data-tipo="1"></div>
+                            </div>
+                            <!--Oportunidades derivadas-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Oportunidades derivadas</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="5" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos5 columnas" data-columna="5" data-tipo="1"></div>
+                            </div>
+                            <!--Acciones para dar cumplimiento-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Acciones para dar cumplimiento</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="6" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos6 columnas" data-columna="6" data-tipo="1"></div>
+                            </div>
+                            <!--Acciones de seguimiento y medición-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Acciones de seguimiento y medición</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="7" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos7 columnas" data-columna="7" data-tipo="1"></div>
+                            </div>
+                            <!--Frecuencia de seguimiento y medición-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Frecuencia de seguimiento y medición</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="8" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos8 columnas" data-columna="8" data-tipo="1"></div>
+                            </div>
+                            <!--Evidencia-->
+                            <div class="col p-0 mw-400">
+                                <div class="d-block color-empresa border text-center p-2">
+                                    <span>Evidencia</span>
+                                    <a href="#!" class="text-success bg-white rounded p-1 agregarinteres text-decoration-none" data-index="9" data-type="1"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="interesvacio interesdatos9 columnas" data-columna="9" data-tipo="1"></div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-negro cerrar" type="button">Cerrar</button>
+                    <button class="btn btn-success grabar_interes" type="button">Grabar</button>
                 </div>
             </div>
         </div>
@@ -2222,8 +2319,6 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                 </div>
                             </div>
                         </div>
-                        
-                        
                         <div class="row flex-nowrap  text-negro">
                             <!--Direccionamiento estratégico-->
                             <div class="col text-center p-0 mw-600">
