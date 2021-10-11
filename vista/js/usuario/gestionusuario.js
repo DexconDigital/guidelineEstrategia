@@ -93,11 +93,13 @@ var gestionUsuario = {
     calendarioSeguimientos: function (datos) {
         var seg = datos.seguimientos;
         var eventos = [];
-        for (var i = 0; i < seg.length; i++) {
-            eventos.push({
-                title: seg[i][0],
-                start: seg[i][3]
-            })
+        if (seg != null || seg != "") {
+            for (var i = 0; i < seg.length; i++) {
+                eventos.push({
+                    title: seg[i][0],
+                    start: seg[i][3]
+                })
+            }
         }
         $('#calendario').fullCalendar("destroy");
         $('#calendario').fullCalendar({
