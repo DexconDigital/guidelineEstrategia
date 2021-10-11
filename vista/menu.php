@@ -285,15 +285,15 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                     <div class="container">
                         <p>Debe responder a:</p>
                         <ul>
-                            <li>¿En que negocio estamos?</li>
-                            <li>¿Cual es el negocio?</li>
+                            <li>¿En qué negocio estamos?</li>
+                            <li>¿Cuál es el negocio?</li>
                             <li>¿Para que existe la empresa?: propósitos</li>
-                            <li>¿Cuales son los elementos diferenciales?: Aptitud distintiva</li>
-                            <li>¿Quienes son nuestros clientes?</li>
-                            <li>¿Cuales son los productos o servicios?</li>
-                            <li>¿Cuales son los mercados presentes y futuros?</li>
+                            <li>¿Cuáles son los elementos diferenciales?: Aptitud distintiva</li>
+                            <li>¿Quiénes son nuestros clientes?</li>
+                            <li>¿Cuáles son los productos o servicios?</li>
+                            <li>¿Cuáles son los mercados presentes y futuros?</li>
                         </ul>
-                        <p class="mt-2"><b>¿Quién formula la mision? La formulación de la misión es responsabilidad de la alta dirección de la empresa o de la unidad estratégica de negocio.</b></p>
+                        <p class="mt-2"><b>¿Quién formula la misión? La formulación de la misión es responsabilidad de la alta dirección de la empresa o de la unidad estratégica de negocio.</b></p>
                         <h5 class="text-center mt-4">Formule su Misión:</h5>
                         <textarea class="form-control" id="mision_text"></textarea>
                     </div>
@@ -362,7 +362,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             <tr>
                                 <td class="text-center">Estratégicos</td>
                                 <td>
-                                    <p>Incluye los procesos relacionados con el establecimiento de las políticas, estrategias, fijación de objetivos, provisión de comunicaciónes, aseguramiento de la disponibilidad de recursos necesarios y evaluación general o revisión de la dirección.</p>
+                                    <p>Incluye los procesos relacionados con el establecimiento de las políticas, estrategias, fijación de objetivos, provisión de comunicaciones, aseguramiento de la disponibilidad de recursos necesarios y evaluación general o revisión de la dirección.</p>
                                     <div class="mh-350">
                                         <table class="w-100 procesogeneral listaproceso1">
                                             <thead>
@@ -404,7 +404,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             <tr>
                                 <td class="text-center">De apoyo</td>
                                 <td>
-                                    <p>Son todos aquellos procesos por la provisión de los recursos, que son necesarios para los procesos estrategicos y los misionales.</p>
+                                    <p>Son todos aquellos procesos por la provisión de los recursos, que son necesarios para los procesos estratégicos y los misionales.</p>
                                     <div class="mh-350">
                                         <table class="w-100 procesogeneral listaproceso3">
                                             <thead>
@@ -928,7 +928,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                             <button class="btn color-empresa m-1 active navlistapoam" id="pills-Economicos-tab" data-toggle="pill" href="#pills-Economicos" type="button" role="tab" aria-controls="pills-Economicos" aria-selected="true">1. Económicos</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="btn color-empresa m-1 navlistapoam1a" id="pills-Politicos-tab" data-toggle="pill" href="#pills-Politicos" type="button" role="tab" aria-controls="pills-Politicos" aria-selected="false" disabled>2. Politicos</button>
+                            <button class="btn color-empresa m-1 navlistapoam1a" id="pills-Politicos-tab" data-toggle="pill" href="#pills-Politicos" type="button" role="tab" aria-controls="pills-Politicos" aria-selected="false" disabled>2. Políticos</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="btn color-empresa m-1 navlistapoam2a" id="pills-Sociales-tab" data-toggle="pill" href="#pills-Sociales" type="button" role="tab" aria-controls="pills-Sociales" aria-selected="false" disabled>3. Sociales</button>
@@ -1989,7 +1989,7 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         </div>
                                         <div class="col-xl-2 p-0">
                                             <div class="d-block color-empresa border text-center p-2">Nombre</div>
-                                            <div class="rounded-0 form-control form-control-sm text-negro">Concentrica</div>
+                                            <div class="rounded-0 form-control form-control-sm text-negro">Concéntrica</div>
                                             <div class="rounded-0 form-control form-control-sm text-negro">Horizontal</div>
                                             <div class="rounded-0 form-control form-control-sm text-negro">Conglomerada</div>
                                         </div>
@@ -2065,12 +2065,12 @@ if ( !isset( $_SESSION['usuario_planfuturo'] ) ) {
                                         </div>
                                         <div class="col-xl-3 p-0">
                                             <div class="d-block color-empresa border text-center p-2">Nombre</div>
-                                            <div class="rounded-0 form-control form-control-sm text-negro">Economias de escala</div>
+                                            <div class="rounded-0 form-control form-control-sm text-negro">Economías de escala</div>
                                             <div class="rounded-0 form-control form-control-sm text-negro">Diferenciación de producto</div>
                                             <div class="rounded-0 form-control form-control-sm text-negro">Inversión de capital</div>
                                             <div class="rounded-0 form-control form-control-sm text-negro">Costos independientes de escala</div>
                                             <div class="rounded-0 form-control form-control-sm text-negro">Acceso a canales de distribución</div>
-                                            <div class="rounded-0 form-control form-control-sm text-negro">Politicas gubernamentales</div>
+                                            <div class="rounded-0 form-control form-control-sm text-negro">Políticas gubernamentales</div>
                                         </div>
                                         <div class="col-xl-3 p-0">
                                             <div class="d-block color-empresa border text-center p-2">Explicación</div>
