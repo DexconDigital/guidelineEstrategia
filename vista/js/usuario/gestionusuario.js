@@ -93,7 +93,7 @@ var gestionUsuario = {
     calendarioSeguimientos: function (datos) {
         var seg = datos.seguimientos;
         var eventos = [];
-        if (seg != null || seg != "") {
+        if (seg != "" && seg != null) {
             for (var i = 0; i < seg.length; i++) {
                 eventos.push({
                     title: seg[i][0],
